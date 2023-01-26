@@ -11,11 +11,20 @@
     "type": "git",
     "url": "git+https://github.com/RosettaYH/CoffeeMaker.git"
   },
+  "keywords": [
+    "compiler"
+  ],
   "author": "Yifan (Rosetta) Hu, Jose Fuentes",
-  "keywords": ["compiler"],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/RosettaYH/CoffeeMaker/issues"
   },
-  "homepage": "https://github.com/RosettaYH/CoffeeMaker#readme"
+  "homepage": "https://github.com/RosettaYH/CoffeeMaker#readme",
+  "devDependencies": {
+    "c8": "^7.12.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "ohm-js": "^16.6.0"
+  }
 }
