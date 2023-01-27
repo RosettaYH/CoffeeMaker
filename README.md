@@ -11,8 +11,8 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 -   Statically typed language
 -   Coffee-themed
 -   Loops
-- 	Some Data Structures 
-- 	Classes
+-       Some Data Structures
+-       Classes
 
 ## Examples
 
@@ -85,7 +85,7 @@ for (let i = 0; i < 10; i++) {
 
 ```
 stir(regular i = 0; i < 10; i++) {
-	brew("I love compilers!")
+    brew("I love compilers!")
 }
 ```
 
@@ -115,11 +115,11 @@ if (age < 18) {
 
 ```
 sugar (age < 18) {
-	brew("Enjoy your early years!")
+    brew("Enjoy your early years!")
 } salt(age > 60) {
-	brew("Retirement age is finally here!")
+    brew("Retirement age is finally here!")
 } no sugar {
-	brew("Errr, good luck in adulthood :p")
+    brew("Errr, good luck in adulthood :p")
 }
 ```
 
@@ -145,11 +145,9 @@ function add(x, y) {
 
 ```
 cup regular add -> (x, y) {
-	complete x + y
+    complete x + y
 }
 ```
-
-git
 
 </td>
 </table>
@@ -163,8 +161,7 @@ git
 
 ```javascript
 const color = ["red", "blue", "green"];
-states_dictionary={"CA":"Sacramento", "OR":"Salem", "WA": "Olympia"};
-
+states_dictionary = { CA: "Sacramento", OR: "Salem", WA: "Olympia" };
 ```
 
 </td>
@@ -190,12 +187,11 @@ Cappuccino[Au Lait] = [3, 2, 1]	#a queue
 
 ```javascript
 class Car {
-  constructor(name, year) {
-    this.name = name;
-    this.year = year;
-  }
+    constructor(name, year) {
+        this.name = name;
+        this.year = year;
+    }
 }
-
 ```
 
 </td>
@@ -204,9 +200,9 @@ class Car {
 
 ```
 keurig Car {
-	create(self, name, year) {
-		this.name = name;
-		this.year = year;
+    create(self, name, year) {
+	    this.name = name;
+	    this.year = year;
 	}
 }
 ```
