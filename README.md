@@ -10,6 +10,8 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 
 - Statically typed language
 - Coffee-themed
+- Loops
+
 
 ## Examples
 
@@ -34,3 +36,63 @@ console.log(“A cup of coffee”)
 
 </td>
 </table>
+
+### Assigning and Intiliazing 
+
+<table>
+<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
+</tr>
+<td>
+
+```javascript
+let number = 100
+const name = "Walter White"
+var boss = "Gus Fring" //OH NO, NOT var! :( 
+// two slashes is a comment in javascript 
+```
+
+</td>
+
+<td>
+
+```
+ regular number = 100 	#for numbers/integers
+ decaf decimal = 3.14 	#for floats
+ put name = "Walter White" 	#for Strings
+ # the pound (hash) is a comment in coffeemaker  
+```
+
+</td>
+</table>
+
+### Loops
+<table>
+<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
+</tr>
+<td>
+
+```javascript
+for (let i = 0; i < 10; i++) {
+    print("I love compilers!")
+}
+```
+
+</td>
+
+<td>
+
+```
+stir(regular i = 0; i < 10; i++) {
+	brew("I love compilers!")
+}
+```
+
+</td>
+</table>
+
+
+
+
+
+
+ some words to use: stir(loop), put, boil, cup(function), hot(true), cold(false), caffeine, coffeemaker(class)
