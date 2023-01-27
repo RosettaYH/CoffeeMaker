@@ -1,0 +1,6 @@
+keurig Car {
+    create(self, name, year) {
+	    this.name = name;
+	    this.year = year;
+	}
+}

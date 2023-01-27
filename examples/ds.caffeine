@@ -1,0 +1,4 @@
+Cappuccino[regular] = [10, 535, 914]	# an array
+Latte{put:put} = {"CA":"Sacramento", "OR":"Salem", "WA": "Olympia"}	#a dictionary/map
+Cappuccino[Flat White] = [1, 2, 3]	#a stack
+Cappuccino[Au Lait] = [3, 2, 1]	#a queue
