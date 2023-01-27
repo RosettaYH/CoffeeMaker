@@ -59,7 +59,7 @@ var boss = "Gus Fring" //OH NO, NOT var! :(
  regular number = 100 	#for numbers/integers
  decaf decimal = 3.14 	#for floats
  put name = "Walter White" 	#for Strings
- # the pound (hash) is a comment in coffeemaker  
+ # the pound (hash) is a comment in CoffeeMaker  
 ```
 
 </td>
@@ -90,9 +90,63 @@ stir(regular i = 0; i < 10; i++) {
 </td>
 </table>
 
+### Conditionals (If-Statement)
 
+<table>
+<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
+</tr>
+<td>
 
+```javascript
+if (age < 18) {
+	console.log("Enjoy your early years!")
+} else if(age > 60) {
+	console.log("Retirement age is finally here!")
+}else {
+	console.log("Errr, good luck in adulthood :p")
+}
+```
 
+</td>
 
+<td>
 
- some words to use: stir(loop), put, boil, cup(function), hot(true), cold(false), caffeine, coffeemaker(class)
+```
+sugar (age < 18) {
+	brew("Enjoy your early years!")
+} salt(age > 60) {
+	brew("Retirement age is finally here!")
+} no sugar {
+	brew("Errr, good luck in adulthood :p")
+}
+```
+
+</td>
+</table>
+
+### Functions 
+
+<table>
+<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
+</tr>
+<td>
+
+```javascript
+function add(x, y) {
+  return x + y;
+}
+
+```
+
+</td>
+
+<td>
+
+```
+cup regular add -> (x, y) {
+	return x + y
+}
+```
+
+</td>
+</table>
