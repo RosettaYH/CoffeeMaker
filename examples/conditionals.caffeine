@@ -1,0 +1,7 @@
+sugar (age < 18) {
+	brew("Enjoy your early years!")
+} salt(age > 60) {
+	brew("Retirement age is finally here!")
+} no sugar {
+	brew("Errr, good luck in adulthood :p")
+}

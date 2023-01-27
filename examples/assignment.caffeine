@@ -1,0 +1,4 @@
+ # the pound (hash) is a comment in CoffeeMaker
+ regular number = 100 	#for numbers/integers
+ decaf decimal = 3.14 	#for floats
+ put name = "Walter White" 	#for Strings

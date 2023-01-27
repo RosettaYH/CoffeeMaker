@@ -1,0 +1,3 @@
+stir(regular i = 0; i < 10; i++) {
+	brew("I love compilers!")
+}
