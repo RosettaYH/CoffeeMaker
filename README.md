@@ -8,10 +8,11 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 
 ## Features
 
-- Statically typed language
-- Coffee-themed
-- Loops
-
+-   Statically typed language
+-   Coffee-themed
+-   Loops
+- 	Some Data Structures 
+- 	Classes
 
 ## Examples
 
@@ -37,7 +38,7 @@ console.log(“A cup of coffee”)
 </td>
 </table>
 
-### Assigning and Intiliazing 
+### Assigning and Intiliazing
 
 <table>
 <tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
@@ -45,10 +46,10 @@ console.log(“A cup of coffee”)
 <td>
 
 ```javascript
-let number = 100
-const name = "Walter White"
-var boss = "Gus Fring" //OH NO, NOT var! :( 
-// two slashes is a comment in javascript 
+let number = 100;
+const name = "Walter White";
+var boss = "Gus Fring"; //OH NO, NOT var! :(
+// two slashes is a comment in javascript
 ```
 
 </td>
@@ -59,13 +60,14 @@ var boss = "Gus Fring" //OH NO, NOT var! :(
  regular number = 100 	#for numbers/integers
  decaf decimal = 3.14 	#for floats
  put name = "Walter White" 	#for Strings
- # the pound (hash) is a comment in CoffeeMaker  
+ # the pound (hash) is a comment in CoffeeMaker
 ```
 
 </td>
 </table>
 
 ### Loops
+
 <table>
 <tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
 </tr>
@@ -73,7 +75,7 @@ var boss = "Gus Fring" //OH NO, NOT var! :(
 
 ```javascript
 for (let i = 0; i < 10; i++) {
-    print("I love compilers!")
+    print("I love compilers!");
 }
 ```
 
@@ -99,11 +101,11 @@ stir(regular i = 0; i < 10; i++) {
 
 ```javascript
 if (age < 18) {
-	console.log("Enjoy your early years!")
-} else if(age > 60) {
-	console.log("Retirement age is finally here!")
-}else {
-	console.log("Errr, good luck in adulthood :p")
+    console.log("Enjoy your early years!");
+} else if (age > 60) {
+    console.log("Retirement age is finally here!");
+} else {
+    console.log("Errr, good luck in adulthood :p");
 }
 ```
 
@@ -124,7 +126,7 @@ sugar (age < 18) {
 </td>
 </table>
 
-### Functions 
+### Functions
 
 <table>
 <tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
@@ -133,7 +135,65 @@ sugar (age < 18) {
 
 ```javascript
 function add(x, y) {
-  return x + y;
+    return x + y;
+}
+```
+
+</td>
+
+<td>
+
+```
+cup regular add -> (x, y) {
+	complete x + y
+}
+```
+
+git
+
+</td>
+</table>
+
+### Some Data Structures
+
+<table>
+<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
+</tr>
+<td>
+
+```javascript
+const color = ["red", "blue", "green"];
+states_dictionary={"CA":"Sacramento", "OR":"Salem", "WA": "Olympia"};
+
+```
+
+</td>
+
+<td>
+
+```
+Cappuccino[regular] = [10, 535, 914]	# an array
+Latte{put:put} = {"CA":"Sacramento", "OR":"Salem", "WA": "Olympia"}	#a dictionary/map
+Cappuccino[Flat White] = [1, 2, 3]	#a stack
+Cappuccino[Au Lait] = [3, 2, 1]	#a queue
+```
+
+</td>
+</table>
+
+### Classes
+
+<table>
+<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
+</tr>
+<td>
+
+```javascript
+class Car {
+  constructor(name, year) {
+    this.name = name;
+    this.year = year;
+  }
 }
 
 ```
@@ -143,8 +203,11 @@ function add(x, y) {
 <td>
 
 ```
-cup regular add -> (x, y) {
-	return x + y
+keurig Car {
+	create(self, name, year) {
+		this.name = name;
+		this.year = year;
+	}
 }
 ```
 
