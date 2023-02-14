@@ -145,7 +145,7 @@ function add(x, y) {
 
 ```
 cup regular add -> (x, y) {
-    complete x + y
+    complete(x + y)
 }
 ```
 
@@ -191,6 +191,10 @@ class Car {
         this.name = name;
         this.year = year;
     }
+
+    function add(x, y) {
+         return x + y;
+    }
 }
 ```
 
@@ -201,9 +205,13 @@ class Car {
 ```
 keurig Car {
     create(self, name, year) {
-	    this.name = name;
-	    this.year = year;
-	}
+        this.name = name
+        this.year = year
+    }
+    
+    cup regular add -> (self, x, y) {
+         complete(x + y)
+    }
 }
 ```
 
