@@ -1,0 +1,87 @@
+CoffeeMaker {
+  Program   = Statement*
+  Statement = VarDec                 		  		  -- vardec
+            | FuncDec    							  -- fundec
+            | ClassDec								  -- classDec
+            | id "=" Exp                              -- assign
+            | print Exp                               -- print
+            | LoopStmt                         		  -- loop
+            | IfStmt								  -- if
+            | return Exp							  -- return
+            
+  VarDec    = Type id "=" Exp
+  
+  FuncDec 	= function Type id "->" "(" Params ")" Block
+  ClassDec  = class id "{" ConstructDec MethodDec* "}"
+  ConstructDec = construct "(" self "," Params ")" "{" Field* "}"
+  Field        = this "." id "=" Exp
+  MethodDec    = function Type id "->" "(" self "," Params ")" Block
+  
+  LoopStmt  = while Exp Block                               		-- while
+  			| for "(" VarDec ";" Exp ";" UpdateExp ")" Block		-- for
+  UpdateExp = id updateop            
+  IfStmt    = if Exp Block (elseif Exp Block)* (else Block)?         -- long
+            | if Exp Block                                           -- short
+
+              
+  Block     = "{" Statement* "}"
+
+  Exp       = ("-" | "!") Exp7                        -- unary
+            | Exp1 "?" Exp1 ":" Exp                   -- ternary
+            | Exp1
+  Exp1      = Exp1 "||" Exp2                          -- binary
+            | Exp2
+  Exp2      = Exp2 "&&" Exp3                          -- binary
+            | Exp3
+  Exp3      = Exp4 ("<="|"<"|"=="|"!="|">="|">") Exp4 -- binary
+            | Exp4
+  Exp4      = Exp4 ("+" | "-") Exp5                   -- binary
+            | Exp5
+  Exp5      = Exp5 ("*" | "/" | "%") Exp6             -- binary
+            | Exp6
+  Exp6      = Exp7 "**" Exp6                          -- binary
+            | Exp7
+  Exp7      = num
+            | true
+            | false
+            | Call
+            | id                                      -- id
+            | "(" Exp ")"                             -- parens
+            | stringlit
+ 
+
+  Call      = id "(" Args ")"
+  Params    = ListOf<id, ",">
+  Args      = ListOf<Exp, ",">
+
+  Type      = "regular"
+            | "decaf"
+            | "put"
+
+  function  = "cup" ~idchar
+  print     = "brew" ~idchar
+  while     = "while" ~idchar
+  for       = "stir" ~idchar
+  in        = "in" ~idchar
+  true      = "true" ~idchar
+  false     = "false" ~idchar
+  
+  if        = "sugar" ~idchar
+  elseif    = "salt" ~idchar
+  else      = "no sugar" ~idchar
+  
+  class     = "keurig" ~idchar
+  construct = "create" ~idchar
+  return    = "complete" ~idchar
+  self 		= "self"
+  this		= "this"
+  
+  
+  keyword   = function | print | while | for | in | true | false | if | elseif | else | class | construct | return | self | this
+  num       = digit+ ("." digit+)? (("E" | "e") ("+" | "-")? digit+)?
+  id        = ~keyword letter idchar*
+  idchar    = letter | digit | "_"
+  stringlit = "\"" (~"\\" ~"\"" ~"\n" any )* "\""
+  updateop  =  "++" | "--"
+  space     += "#" (~"\n" any)* "\n"                      -- comment
+}
