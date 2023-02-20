@@ -1,3 +1,5 @@
-stir(regular i = 0; i < 10; i++) {
-	brew("I love compilers!")
+regular i = 4
+while(i < 10){
+	brew("I love to sleep!")
+	i = i + 1
 }
