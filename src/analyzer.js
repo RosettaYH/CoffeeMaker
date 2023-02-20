@@ -90,26 +90,25 @@ export default function analyze(sourceCode) {
       params,
       _close,
       _bodyOpen,
-      fields,
-      _bodyClose
+      _bodyClose,
+	  fields
     ) {
       // TODO: modify to add fields
       params = params.asIteration().children;
-      fields = fields.asIteration().children;
-      context = new Context(context);
+	  const cos = new core.Constructor(_self.sourceString, params.length, true);
+      //fields = fields.asIteration().children; //this is the problem here
+      context.add(_self.sourceString, cos, _self)
+	  context = new Context(context)
+
       const paramsRep = params.map((p) => {
         let variable = new core.Variable(p.sourceString, true);
         context.add(p.sourceString, variable, p);
         return variable;
       });
+	  const fieldRep = fields.rep()
+	  context = context.parent
 
-      const fieldsRep = fields.map((f, i) => {
-        let variable = new core.Field(f, p[i]);
-        context.add(f.sourceString, field, f);
-        return variable;
-      });
-
-      return new core.ConstructorDeclaration(paramsRep, fields.rep());
+      return new core.ConstructorDeclaration(paramsRep, fieldRep);
     },
     MethodDec(
       _fun,
