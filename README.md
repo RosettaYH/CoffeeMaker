@@ -11,8 +11,7 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 -   Statically typed language
 -   Coffee-themed
 -   Loops
--       Some Data Structures
--       Classes
+-   Classes
 
 ## Examples
 
@@ -84,8 +83,10 @@ for (let i = 0; i < 10; i++) {
 <td>
 
 ```
-stir(regular i = 0; i < 10; i++) {
-    brew("I love compilers!")
+regular i = 4
+while(i < 10){
+	brew("I love to sleep!")
+	i = i + 1
 }
 ```
 
@@ -147,32 +148,6 @@ function add(x, y) {
 cup regular add -> (x, y) {
     complete(x + y)
 }
-```
-
-</td>
-</table>
-
-### Some Data Structures
-
-<table>
-<tr> <th>JavaScript</th><th>CoffeeMaker</th><tr>
-</tr>
-<td>
-
-```javascript
-const color = ["red", "blue", "green"];
-states_dictionary = { CA: "Sacramento", OR: "Salem", WA: "Olympia" };
-```
-
-</td>
-
-<td>
-
-```
-Cappuccino[regular] = [10, 535, 914]	# an array
-Latte{put:put} = {"CA":"Sacramento", "OR":"Salem", "WA": "Olympia"}	#a dictionary/map
-Cappuccino[Flat White] = [1, 2, 3]	#a stack
-Cappuccino[Au Lait] = [3, 2, 1]	#a queue
 ```
 
 </td>
