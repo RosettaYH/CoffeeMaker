@@ -144,6 +144,12 @@ export default function analyze(sourceCode) {
     Statement_print(_print, argument) {
       return new core.PrintStatement(argument.rep());
     },
+
+	// added while 
+	LoopStmt_while(_while, test, body) {
+		return new core.WhileStatement(test.rep(), body.rep());
+	},
+
     IfStmt_long(
       _if,
       expression,
