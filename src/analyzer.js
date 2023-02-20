@@ -49,26 +49,15 @@ export default function analyze(sourceCode) {
     Program(body) {
       return new core.Program(body.rep());
     },
-    Statement_vardec(_let, id, _eq, initializer, _semicolon) {
+    VarDec(_type, id, _eq, initializer) {
       const initializerRep = initializer.rep();
       const variable = new core.Variable(id.sourceString, false);
       context.add(id.sourceString, variable, id);
       return new core.VariableDeclaration(variable, initializerRep);
     },
-    Statement_fundec(
-      _fun,
-      id,
-      _open,
-      params,
-      _close,
-      _equals,
-      body,
-      _semicolon
-    ) {
+    FuncDec(_fun, _type, id, _point, _open, params, _close, body) {
       params = params.asIteration().children;
       const fun = new core.Function(id.sourceString, params.length, true);
-      // Add the function to the context before analyzing the body, because
-      // we want to allow functions to be recursive
       context.add(id.sourceString, fun, id);
       context = new Context(context);
       const paramsRep = params.map((p) => {
@@ -80,16 +69,108 @@ export default function analyze(sourceCode) {
       context = context.parent;
       return new core.FunctionDeclaration(fun, paramsRep, bodyRep);
     },
-    Statement_assign(id, _eq, expression, _semicolon) {
+    ClassDec(_class, id, _start, constructor, method, _end) {
+      const className = new core.Class(id.sourceString, true);
+      context.add(id.sourceString, className, id);
+
+      return new core.ClassDeclaration(
+        className,
+        constructor.rep(),
+        method.rep()
+      );
+    },
+    //  ConstructDec = construct "(" self "," Params ")" "{" Field* "}"
+    // Field        = this "." id "=" Exp
+
+    ConstructDec(
+      _construct,
+      _open,
+      _self,
+      _op,
+      params,
+      _close,
+      _bodyOpen,
+      fields,
+      _bodyClose
+    ) {
+      // TODO: modify to add fields
+      params = params.asIteration().children;
+      fields = fields.asIteration().children;
+      context = new Context(context);
+      const paramsRep = params.map((p) => {
+        let variable = new core.Variable(p.sourceString, true);
+        context.add(p.sourceString, variable, p);
+        return variable;
+      });
+
+      const fieldsRep = fields.map((f, i) => {
+        let variable = new core.Field(f, p[i]);
+        context.add(f.sourceString, field, f);
+        return variable;
+      });
+
+      return new core.ConstructorDeclaration(paramsRep, fields.rep());
+    },
+    MethodDec(
+      _fun,
+      _type,
+      id,
+      _point,
+      _open,
+      _self,
+      _op,
+      params,
+      _close,
+      body
+    ) {
+      params = params.asIteration().children;
+      const fun = new core.Function(id.sourceString, params.length, true);
+      context.add(id.sourceString, fun, id);
+      context = new Context(context);
+      const paramsRep = params.map((p) => {
+        let variable = new core.Variable(p.sourceString, true);
+        context.add(p.sourceString, variable, p);
+        return variable;
+      });
+      const bodyRep = body.rep();
+      context = context.parent;
+      return new core.MethodDeclaration(fun, paramsRep, bodyRep);
+    },
+    Statement_assign(id, _eq, expression) {
       const target = id.rep();
       check(!target.readOnly, `${target.name} is read only`, id);
       return new core.Assignment(target, expression.rep());
     },
-    Statement_print(_print, argument, _semicolon) {
+    Statement_print(_print, argument) {
       return new core.PrintStatement(argument.rep());
     },
-    Statement_while(_while, test, body) {
-      return new core.WhileStatement(test.rep(), body.rep());
+    IfStmt_long(
+      _if,
+      expression,
+      body,
+      _elseif,
+      elseifexp,
+      elseifbody,
+      _else,
+      elsebody
+    ) {
+      // TODO: needChange
+      console.log(elseifexp.rep());
+      const elseifexpRep = elseifexp.rep();
+      const elseifbodyRep = elseifbody.rep();
+      let c = elseifexpRep.map(function (exp, i) {
+        return [exp, elseifbodyRep[i]];
+      });
+      for (const [key, value] of Object.entries(c)) {
+        return new core.IfStatement(key, value);
+      }
+      return new core.IfStatement(expression.rep(), body.rep());
+    },
+    IfStmt_short(_if, expression, body) {
+      return new core.IfStatement(expression.rep(), body.rep(), elsebody.rep());
+    },
+    Statement_return(_return, expression) {
+      return new core.ReturnStatement(expression.rep());
     },
     Block(_open, body, _close) {
       return body.rep();
@@ -147,6 +228,9 @@ export default function analyze(sourceCode) {
     },
     num(_whole, _point, _fraction, _e, _sign, _exponent) {
       return Number(this.sourceString);
+    },
+    stringlit(_open, _body, _close) {
+      return String(this.sourceString);
     },
     _terminal() {
       return this.sourceString;

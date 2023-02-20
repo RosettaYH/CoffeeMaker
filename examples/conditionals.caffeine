@@ -1,7 +1,15 @@
+regular age = 0
 sugar (age < 18) {
-	brew("Enjoy your early years!")
+    brew("Enjoy your early years!")
 } salt(age > 60) {
-	brew("Retirement age is finally here!")
+    brew("Retirement age is finally here!")
+} salt(age > 100) {
+	brew("Great Job!")
 } no sugar {
-	brew("Errr, good luck in adulthood :p")
+    brew("Errr, good luck in adulthood :p")
+}
+
+decaf money = 5.1
+sugar (money < 6.0) {
+	complete(money)
 }

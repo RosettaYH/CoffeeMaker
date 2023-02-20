@@ -2,7 +2,7 @@ import assert from "assert/strict";
 import util from "util";
 import compile from "../src/compiler.js";
 
-const sampleProgram = "brew(“A cup of coffee”)";
+const sampleProgram = 'brew("A cup of coffee")';
 
 describe("The compiler", () => {
   it("throws when the output type is unknown", (done) => {

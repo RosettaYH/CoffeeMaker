@@ -73,6 +73,12 @@ export class Function {
 }
 
 // NEW
+export class ForLoop {
+  constructor(variable, start, end, body) {
+    Object.assign(this, { variable, start, end, body });
+  }
+}
+
 export class IfStatement {
   constructor(test, consequent, alternate) {
     Object.assign(this, { test, consequent, alternate });
@@ -82,6 +88,44 @@ export class IfStatement {
 export class ReturnStatement {
   constructor(expression) {
     this.expression = expression;
+  }
+}
+
+export class ClassDeclaration {
+  constructor(id, constructorDec, methods) {
+    Object.assign(this, { id, constructorDec, methods });
+  }
+}
+export class Class {
+  constructor(name, readOnly) {
+    Object.assign(this, { name, readOnly });
+  }
+}
+
+export class ConstructorDeclaration {
+  constructor(parameters, body) {
+    Object.assign(this, { parameters, body });
+  }
+}
+
+export class Field {
+  constructor(type, variable, initializer) {
+    Object.assign(this, { type, variable, initializer });
+  }
+}
+
+export class MethodDeclaration {
+  constructor(name, params, body) {
+    Object.assign(this, { name, params, body });
+  }
+}
+
+export class Type {
+  static INT = new Type("regular");
+  static FLOATS = new Type("decaf");
+  static STRING = new Type("put");
+  constructor(description) {
+    Object.assign(this, { description });
   }
 }
 
