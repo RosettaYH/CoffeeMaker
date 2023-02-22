@@ -79,8 +79,6 @@ export default function analyze(sourceCode) {
         method.rep()
       );
     },
-    //  ConstructDec = construct "(" self "," Params ")" "{" Field* "}"
-    // Field        = this "." id "=" Exp
 
     ConstructDec(
       _construct,
@@ -93,10 +91,10 @@ export default function analyze(sourceCode) {
       _bodyClose,
 	  fields
     ) {
-      // TODO: modify to add fields
+      
       params = params.asIteration().children;
 	  const cos = new core.Constructor(_self.sourceString, params.length, true);
-      //fields = fields.asIteration().children; //this is the problem here
+
       context.add(_self.sourceString, cos, _self)
 	  context = new Context(context)
 
@@ -159,8 +157,6 @@ export default function analyze(sourceCode) {
       _else,
       elsebody
     ) {
-      // TODO: needChange
-      console.log(elseifexp.rep());
       const elseifexpRep = elseifexp.rep();
       const elseifbodyRep = elseifbody.rep();
       let c = elseifexpRep.map(function (exp, i) {
@@ -170,9 +166,6 @@ export default function analyze(sourceCode) {
         return new core.IfStatement(key, value);
       }
       return new core.IfStatement(expression.rep(), body.rep());
-    },
-    IfStmt_short(_if, expression, body) {
-      return new core.IfStatement(expression.rep(), body.rep(), elsebody.rep());
     },
     Statement_return(_return, expression) {
       return new core.ReturnStatement(expression.rep());
@@ -190,6 +183,7 @@ export default function analyze(sourceCode) {
         alternate.rep()
       );
     },
+	//ask about op.rep(), do we need to specify the operators like +, -, *, ....
     Exp1_binary(left, op, right) {
       return new core.BinaryExpression(op.rep(), left.rep(), right.rep());
     },
