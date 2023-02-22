@@ -3,19 +3,19 @@ import assert from "assert/strict";
 import analyze from "../src/analyzer.js";
 
 const sample = `
-				regular x=sqrt(9) 
-				x = 10
-				regular dog = -(6**3)
-				sugar (dog < 10 || dog > 100) {brew("I love dogs!")}
-				decaf decimal = 4.5
-				sugar (decimal < 5 && decimal > 1){brew("Still have health!")} no sugar {brew("No more health!")} 
-				cup regular multiThree -> (x) {complete 3 * x} 
-				while(false){decaf cows = 5}
-				while(true){regular y=3 brew(0?1:2)}
-				sugar (x < 18) {brew("Enjoy your early years!")} salt(x > 60) {brew("Retirement age is finally here!")}salt(x > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}
-				decaf money = 5.1 sugar (money < 6.0) {complete(money)}
-				keurig Car {create(self, name, year) {this.name = name this.year = year} cup regular add -> (self, x, y) {complete(x + y)} 
-			}`;
+		regular x=sqrt(9) 
+		x = 10
+		regular dog = -(6**3)
+		sugar (dog < 10 || dog > 100) {brew("I love dogs!")}
+		decaf decimal = 4.5
+		sugar (decimal < 5 && decimal > 1){brew("Still have health!")} no sugar {brew("No more health!")} 
+		cup regular multiThree -> (x) {complete 3 * x} 
+		while(false){decaf cows = 5}
+		while(true){regular y=3 brew(0?1:2)}
+		sugar (x < 18) {brew("Enjoy your early years!")} salt(x > 60) {brew("Retirement age is finally here!")}salt(x > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}
+		decaf money = 5.1 sugar (money < 6.0) {complete(money)}
+		keurig Car {create(self, name, year) {this.name = name this.year = year} cup regular add -> (self, x, y) {complete(x + y)} 
+		}`;
 
 const expected = `   1 | Program statements=[#2,#6,#7,#11,#16,#18,#23,#28,#31,#36,#40,#42,#45]
    2 | VariableDeclaration variable=#3 initializer=#4
