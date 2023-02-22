@@ -72,13 +72,6 @@ export class Function {
   }
 }
 
-// NEW
-export class ForLoop {
-  constructor(variable, start, end, body) {
-    Object.assign(this, { variable, start, end, body });
-  }
-}
-
 export class IfStatement {
   constructor(test, consequent, alternate) {
     Object.assign(this, { test, consequent, alternate });
@@ -108,10 +101,11 @@ export class ConstructorDeclaration {
   }
 }
 
-export class Field {
-  constructor(type, variable, initializer) {
-    Object.assign(this, { type, variable, initializer });
-  }
+//added constructor
+export class Constructor {
+	constructor(name, paramCount, readOnly){
+		Object.assign(this, {name, paramCount, readOnly});
+	}
 }
 
 export class MethodDeclaration {
