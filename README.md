@@ -192,3 +192,5 @@ keurig Car {
 
 </td>
 </table>
+
+#### Authors: Rosetta Yu and Jose Fuentes
