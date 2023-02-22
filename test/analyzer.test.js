@@ -1,6 +1,6 @@
 import util from "util";
 import assert from "assert/strict";
-import analyze from "../src/analyzer.js";
+import analyze, { error, check } from "../src/analyzer.js";
 
 const sample = `
 		regular x=sqrt(9) 
@@ -77,4 +77,13 @@ describe("The analyzer", () => {
     it(`produces the expected graph for the simple sample program`, () => {
         assert.deepEqual(util.format(analyze(sample)), expected);
     });
+    it("throws when calling the error function", () => {
+        assert.throws(() => error("Oops"));
+        assert.throws(() =>
+            error("message", { source: { getLineAndColumnMessage: () => {} } })
+        );
+    });
+	it("does check function", () => {
+		assert.throws(() => check() )
+	} )
 });
