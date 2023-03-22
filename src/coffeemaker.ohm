@@ -1,13 +1,14 @@
 CoffeeMaker {
   Program   = Statement*
   Statement = VarDec                 		  		  -- vardec
-            | FuncDec    							          -- fundec
+            | FuncDec    							          -- funcdec
             | ClassDec								          -- classDec
             | id "=" Exp                        -- assign
             | print Exp                         -- print
             | LoopStmt                          -- loop
             | IfStmt								            -- if
             | return Exp							          -- return
+            | UpdateExp                         -- update
             
   VarDec    = Type id "=" Exp
   
@@ -29,17 +30,17 @@ CoffeeMaker {
   Exp       = ("-" | "!") Exp7                        -- unary
             | Exp1 "?" Exp1 ":" Exp                   -- ternary
             | Exp1
-  Exp1      = Exp1 "||" Exp2                          -- binary
+  Exp1      = Exp1 "||" Exp2                          -- or
             | Exp2
-  Exp2      = Exp2 "&&" Exp3                          -- binary
+  Exp2      = Exp2 "&&" Exp3                          -- and
             | Exp3
-  Exp3      = Exp4 ("<="|"<"|"=="|"!="|">="|">") Exp4 -- binary
+  Exp3      = Exp4 ("<="|"<"|"=="|"!="|">="|">") Exp4 -- compare
             | Exp4
-  Exp4      = Exp4 ("+" | "-") Exp5                   -- binary
+  Exp4      = Exp4 ("+" | "-") Exp5                   -- add
             | Exp5
-  Exp5      = Exp5 ("*" | "/" | "%") Exp6             -- binary
+  Exp5      = Exp5 ("*" | "/" | "%") Exp6             -- multiply
             | Exp6
-  Exp6      = Exp7 "**" Exp6                          -- binary
+  Exp6      = Exp7 "**" Exp6                          -- power
             | Exp7
   Exp7      = num
             | true
@@ -57,6 +58,7 @@ CoffeeMaker {
   Type      = "regular"                        
             | "decaf"
             | "put"
+            | id              -- id
 
   function  = "cup" ~idchar
   print     = "brew" ~idchar

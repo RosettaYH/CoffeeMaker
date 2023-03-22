@@ -2,6 +2,53 @@ import util from "util";
 import assert from "assert/strict";
 import analyze, { error, check } from "../src/analyzer.js";
 
+const semanticChecks = [
+  ["variables can be printed", 'brew("A cup of coffee")'],
+  ["variables declaration int", "regular number = 100"],
+  ["variables can be reassigned", "regular number = 100 number = number + 10"],
+  ["variables declaration floats", "decaf decimal = 3.14"],
+  ["variables declaration string", 'put name = "Walter White"'],
+  ["ternary", "regular number = 100 brew(number == 5 ? 5 : 1)"],
+  ["||", "brew(true||1<2||false)"],
+  ["&&", "brew(true&&1<2&&false)"],
+  ["relation", "brew(1<=2 && 3.5<1.2)"],
+  [
+    "return",
+    "regular x = 0 regular y = 1 cup regular add -> (x, y) {complete(x + y)}"
+  ],
+  ["built-in pi", "brew(π)"],
+  ["built-in sqrt", "brew(sqrt(π))"],
+  ["built-in exp", "brew(exp(9))"],
+  ["built-in sin", "brew(sin(π))"],
+  ["built-in cos", "brew(cos(93.999))"],
+  ["function assign", 'cup regular add -> (x, y) {brew("Hi")}'],
+  ["short if", "decaf money = 5.1 sugar (money < 6.0) {brew(money)}"],
+  [
+    "long if",
+    'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}'
+  ],
+  ["while works", "while(false){decaf cows = 5}"],
+  ["increment works", "regular i = 10 i++"],
+  [
+    "function works",
+    "regular x = 1 cup regular multiThree -> (x) {complete 3 * x} "
+  ],
+  [
+    "class works",
+    "keurig Car {create(self, name, year) {this.name = name this.year = year} cup regular add -> (self, x, y) {complete(x + y)}}"
+  ]
+];
+
+const semanticErrors = [
+  ["increment and decrement", 'put x = "Hello" x--', /Expected an integer/],
+  // ["break outside loop", "return", /Break can only appear in a loop/],
+  [
+    "return outside function",
+    'complete("return something")',
+    /Return can only appear in a function/
+  ]
+];
+
 const sample = `
 		regular x=sqrt(9) 
 		x = 10
@@ -73,17 +120,33 @@ const expected = `   1 | Program statements=[#2,#6,#7,#11,#16,#18,#23,#28,#31,#3
   54 | ReturnStatement expression=#55
   55 | BinaryExpression op='+' left=#52 right=#53`;
 
+//describe("The analyzer", () => {
+//    it(`produces the expected graph for the simple sample program`, () => {
+//        assert.deepEqual(util.format(analyze(sample)), expected);
+//    });
+//    it("throws when calling the error function", () => {
+//        assert.throws(() => error("Oops"));
+//        assert.throws(() =>
+//            error("message", { source: { getLineAndColumnMessage: () => {} } })
+//        );
+//    });
+//	it("does check function", () => {
+//		assert.throws(() => check() )
+//	} )
+//});
+
 describe("The analyzer", () => {
-    it(`produces the expected graph for the simple sample program`, () => {
-        assert.deepEqual(util.format(analyze(sample)), expected);
+  for (const [scenario, source] of semanticChecks) {
+    it(`recognizes ${scenario}`, () => {
+      assert.ok(analyze(source));
     });
-    it("throws when calling the error function", () => {
-        assert.throws(() => error("Oops"));
-        assert.throws(() =>
-            error("message", { source: { getLineAndColumnMessage: () => {} } })
-        );
+  }
+  for (const [scenario, source, errorMessagePattern] of semanticErrors) {
+    it(`throws on ${scenario}`, () => {
+      assert.throws(() => analyze(source), errorMessagePattern);
     });
-	it("does check function", () => {
-		assert.throws(() => check() )
-	} )
+  }
+  it(`produces the expected graph for the simple sample program`, () => {
+    assert.deepEqual(util.format(analyze(sample)), expected);
+  });
 });

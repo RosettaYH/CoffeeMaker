@@ -1,8 +1,12 @@
 import util from "util";
+import stringify from "graph-stringify";
 
 export class Program {
   constructor(statements) {
     this.statements = statements;
+  }
+  [util.inspect.custom]() {
+    return stringify(this);
   }
 }
 
@@ -49,8 +53,8 @@ export class Conditional {
 }
 
 export class BinaryExpression {
-  constructor(op, left, right) {
-    Object.assign(this, { op, left, right });
+  constructor(op, left, right, type) {
+    Object.assign(this, { op, left, right, type });
   }
 }
 
@@ -61,14 +65,20 @@ export class UnaryExpression {
 }
 
 export class Variable {
-  constructor(name, readOnly) {
-    Object.assign(this, { name, readOnly });
+  // Generated when processing a variable declaration
+  constructor(name, readOnly, type) {
+    Object.assign(this, { name, readOnly, type });
   }
 }
 
+// export class Function {
+//   constructor(name, paramCount, readOnly) {
+//     Object.assign(this, { name, paramCount, readOnly });
+//   }
+// }
 export class Function {
-  constructor(name, paramCount, readOnly) {
-    Object.assign(this, { name, paramCount, readOnly });
+  constructor(name, type) {
+    Object.assign(this, { name, type });
   }
 }
 
@@ -103,9 +113,9 @@ export class ConstructorDeclaration {
 
 //added constructor
 export class Constructor {
-	constructor(name, paramCount, readOnly){
-		Object.assign(this, {name, paramCount, readOnly});
-	}
+  constructor(name, paramCount, readOnly) {
+    Object.assign(this, { name, paramCount, readOnly });
+  }
 }
 
 export class MethodDeclaration {
@@ -114,54 +124,42 @@ export class MethodDeclaration {
   }
 }
 
+export class Increment {
+  // Example: count++
+  constructor(variable) {
+    this.variable = variable;
+  }
+}
+
+export class Decrement {
+  // Example: count--
+  constructor(variable) {
+    this.variable = variable;
+  }
+}
+
 export class Type {
   static INT = new Type("regular");
-  static FLOATS = new Type("decaf");
+  static FLOAT = new Type("decaf");
   static STRING = new Type("put");
+  static VOID = new Type("void");
+  static BOOLEAN = new Type("boolean");
+  static ANY = new Type("any");
   constructor(description) {
     Object.assign(this, { description });
   }
 }
-
-export const standardLibrary = Object.freeze({
-  π: new Variable("π", true),
-  sqrt: new Function("sqrt", 1, true),
-  sin: new Function("sin", 1, true),
-  cos: new Function("cos", 1, true),
-  exp: new Function("exp", 1, true),
-  ln: new Function("ln", 1, true),
-  hypot: new Function("hypot", 2, true)
-});
-
-// Return a compact and pretty string representation of the node graph,
-// taking care of cycles. Written here from scratch because the built-in
-// inspect function, while nice, isn't nice enough. Defined properly in
-// the root class prototype so that it automatically runs on console.log.
-Program.prototype[util.inspect.custom] = function () {
-  const tags = new Map();
-
-  // Attach a unique integer tag to every node
-  function tag(node) {
-    if (tags.has(node) || typeof node !== "object" || node === null) return;
-    tags.set(node, tags.size + 1);
-    for (const child of Object.values(node)) {
-      Array.isArray(child) ? child.forEach(tag) : tag(child);
-    }
+export class FunctionType extends Type {
+  constructor(paramTypes, returnType) {
+    super(
+      `(${paramTypes.map((t) => t.description).join(",")})->${
+        returnType.description
+      }`
+    );
+    Object.assign(this, { paramTypes, returnType });
   }
-
-  function* lines() {
-    function view(e) {
-      if (tags.has(e)) return `#${tags.get(e)}`;
-      if (Array.isArray(e)) return `[${e.map(view)}]`;
-      return util.inspect(e);
-    }
-    for (let [node, id] of [...tags.entries()].sort((a, b) => a[1] - b[1])) {
-      let type = node.constructor.name;
-      let props = Object.entries(node).map(([k, v]) => `${k}=${view(v)}`);
-      yield `${String(id).padStart(4, " ")} | ${type} ${props.join(" ")}`;
-    }
-  }
-
-  tag(this);
-  return [...lines()].join("\n");
-};
+}
+String.prototype.type = Type.STRING;
+Number.prototype.type = Type.FLOAT;
+BigInt.prototype.type = Type.INT;
+Boolean.prototype.type = Type.BOOLEAN;
