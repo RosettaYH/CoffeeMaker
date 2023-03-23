@@ -18,6 +18,6 @@ export const contents = Object.freeze({
   cos: new Function("cos", floatFloatType),
   exp: new Function("exp", floatFloatType),
   ln: new Function("ln", floatFloatType),
-  π: new Function("sqrt", floatFloatType),
+  sqrt: new Function("sqrt", floatFloatType),
   hypot: new Function("hypot", floatFloatFloatType)
 });
