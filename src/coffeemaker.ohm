@@ -9,6 +9,7 @@ CoffeeMaker {
             | IfStmt								            -- if
             | return Exp							          -- return
             | UpdateExp                         -- update
+			| Exp						-- exp
             
   VarDec    = Type id "=" Exp
   
@@ -52,13 +53,15 @@ CoffeeMaker {
  
 
   Call      = id "(" Args ")"
-  Params    = ListOf<id, ",">
+  Params    = ListOf<ParamType, ",">
   Args      = ListOf<Exp, ",">
 
   Type      = "regular"                        
             | "decaf"
             | "put"
             | id              -- id
+			
+  ParamType = Type id 
 
   function  = "cup" ~idchar
   print     = "brew" ~idchar
