@@ -17,22 +17,18 @@ const semanticChecks = [
     ["&&", "brew(true&&1<2&&false)"], //this works
     ["relation", "brew(1<=2 && 3.5<1.2)"], //this works
 
-    [
-        "return with +",
-        "cup regular name -> (regular x) {complete x + 9}",
-    ], //this works
-    [
-    	"return with -",
-    	"cup regular name -> (regular x) {complete x - 9}",
-
-    ],
+    ["return with +", "cup regular name -> (regular x) {complete x + 9}"], //this works
+    ["return with -", "cup regular name -> (regular x) {complete x - 9}"],
 
     ["built-in pi", "brew(π)"], //this works
     ["built-in sqrt", "brew(sqrt(π))"], //this works
     ["built-in exp", "brew(exp(9))"], //this works
     ["built-in sin", "brew(sin(π))"], //this works
     ["built-in cos", "brew(cos(93.999))"], //this works
-    ["function assign put", 'cup regular add -> (decaf x, decaf y) {brew("Hi")}'], // this works
+    [
+        "function assign put",
+        'cup regular add -> (decaf x, decaf y) {brew("Hi")}',
+    ], // this works
     ["short if", "decaf money = 5.1 sugar (money < 6.0) {brew(money)}"], //this works
     [
         "long if",
@@ -44,11 +40,11 @@ const semanticChecks = [
     ["decrement works", "regular i = 20 i--"], //this works
     [
         "function works with multiplication and regular",
-    	"cup regular name -> (regular x) {complete x * 9}"
+        "cup regular name -> (regular x) {complete x * 9}",
     ], //this works
     [
-    	"function works with division and decaf",
-    	"cup decaf name -> (decaf x) {decaf x / 9}"
+        "function works with division and decaf",
+        "cup decaf name -> (decaf x) {decaf x / 9}",
     ], //this works
 
     [
@@ -56,47 +52,94 @@ const semanticChecks = [
         "keurig Car {create(self, put name, regular year) {this.name = name this.year = year}}",
     ], //this works
 
-	[
-		"simple if statement",
-		"regular x = 5 sugar (x < 10) {brew(x)}"], //this works
-	[
-		"if with else works",
-		"regular x = 5 sugar (x < 10) {brew(x)} no sugar {brew(10)}", //this works
-	],
+    ["simple if statement", "regular x = 5 sugar (x < 10) {brew(x)}"], //this works
+    [
+        "if with else works",
+        "regular x = 5 sugar (x < 10) {brew(x)} no sugar {brew(10)}", //this works
+    ],
 
-	[
-		"if with else if and else works",
-		"regular x = 5 sugar (x < 10) {brew(x)} salt (x > 10) {brew(10)} no sugar {brew(20)}", //this works
-	],
+    [
+        "if with else if and else works",
+        "regular x = 5 sugar (x < 10) {brew(x)} salt (x > 10) {brew(10)} no sugar {brew(20)}", //this works
+    ],
 
-	[
-		"if with multiple else if works", //this works
-		'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}'
-	],
-	[
-		"power works",
-		"brew(2**3)"
-	],
-	[
-		"unary expression",
-		"decaf decimal = -5.32"
-	],
+    [
+        "if with multiple else if works", //this works
+        'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
+    ],
+    ["power works", "brew(2**3)"],
+    ["unary expression", "decaf decimal = -5.32"],
 
-
-	//having trouble with this one
-    // [
-    //     "class works with methods",
-    //     'keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put hello -> (self,) {complete 5}}',
-    // ],
+    //having trouble with this one
+    [
+        "class works with methods",
+        'keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put hello -> (self,) {complete 5}}',
+    ],
 ];
 
 const semanticErrors = [
     ["increment and decrement", 'put x = "Hello" x--', /Expected an integer/], //this works
     [
+        //this works
         "return outside function",
         'complete("return something")',
         /Return can only appear in a function/,
-    ], //this works
+    ],
+    [
+        //doesn't work
+        "creating class with wrong number of arguments",
+        'keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate}}Person p = Person("Jose", 03022002, "blue")',
+        /Expected 2 arguments but got 3/,
+    ],
+    [
+        //doesn't work
+        "function with more then required arguments",
+        "cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine(1, 2)",
+        /1 argument(s) required but 2 passed/,
+    ],
+	[
+		"function with less then required arguments",
+		"cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine()",
+		/1 argument(s) required but 0 passed/,
+	],
+    [
+        //doesn't work
+        "type with wrong value, number assigned to string",
+        "put x = 5.5",
+        /Expected a string but got a number/,
+    ],
+    [
+        //doesn't work
+        "type with wrong value, string assigned to number",
+        'regular x = "hello"',
+        /Expected a number but got a string/,
+    ],
+    [	//this works
+        "using undeclared indentifier",
+        "brew(x)",
+        /Identifier x not declared/,
+    ],
+    [
+        //this works
+        "variable used as a function",
+        "put x = 5 x()",
+        /Call of non-function or non-constructor/,
+    ],
+    [	//this works
+        "redeclaring variable",
+        "put x = 5 put x = 6",
+        /Identifier x already declared/,
+    ],
+    [	//this works
+        "subtracting string from number",
+        'brew(5 - "hello")',
+        /Expected a number or string/,
+    ],
+    [	//this works
+        "adding string to number",
+        'brew(5 + "hello")',
+        /Expected a number or string/,
+    ],
 ];
 
 //just type one or a couple near the end (look at carlos to see how its done)
@@ -194,7 +237,7 @@ describe("The analyzer", () => {
         });
     }
 
-	// does the semantic errors, will do later 
+    // does the semantic errors, will do later
     for (const [scenario, source, errorMessagePattern] of semanticErrors) {
         it(`throws on ${scenario}`, () => {
             assert.throws(() => analyze(source), errorMessagePattern);
