@@ -29,60 +29,48 @@ function mustHaveNumericType(e, at) {
 }
 
 function mustHaveNumericOrStringType(e, at) {
-  // console.log("MUST HAVE", e, e.type);
-  // console.log(INT);
+	// console.log([INT.description, FLOAT.description, STRING.description].includes(e.type));
+	// console.log("INT", INT.description)
+	// console.log("FLOAT", FLOAT.description)
+	// console.log("STRING", STRING)
+	// console.log("e.type", e.type)
+	// console.log(e.type.description === FLOAT.description)
+
   must(
-    [INT, FLOAT, STRING].includes(e.type.description),
+    [INT.description, FLOAT.description, STRING.description].includes(e.type),
     "Expected a number or string",
     at
   );
 }
 
-function mustHaveBooleanType(e, at) {
-  must(e.type === BOOLEAN, "Expected a boolean", at);
-}
-
-function mustHaveIntegerType(e, at) {
-  console.log(INT);
-  must(e.type === INT, "Expected an integer", at);
-}
-
-// function mustHaveAnArrayType(e, at) {
-//   must(e.type instanceof core.ArrayType, "Expected an array", at);
+// function mustHaveBooleanType(e, at) {
+//   must(e.type === BOOLEAN, "Expected a boolean", at);
 // }
 
-function entityMustBeAType(e, at) {
-  must(e instanceof core.Type, "Type expected", at);
+function mustHaveIntegerType(e, at) {
+  must(e.type === INT || e.type === FLOAT, "Expected an integer", at);
 }
 
-function mustBeTheSameType(e1, e2, at) {
-  must(equivalent(e1.type, e2.type), "Operands do not have the same type", at);
-}
+// function entityMustBeAType(e, at) {
+//   must(e instanceof core.Type, "Type expected", at);
+// }
 
-function mustAllHaveSameType(expressions, at) {
-  // Used to check array elements, for example
-  must(
-    expressions.slice(1).every((e) => equivalent(e.type, expressions[0].type)),
-    "Not all elements have the same type",
-    at
-  );
-}
+// function mustBeTheSameType(e1, e2, at) {
+//   must(equivalent(e1.type, e2.type), "Operands do not have the same type", at);
+// }
+
+// function mustAllHaveSameType(expressions, at) {
+//   // Used to check array elements, for example
+//   must(
+//     expressions.slice(1).every((e) => equivalent(e.type, expressions[0].type)),
+//     "Not all elements have the same type",
+//     at
+//   );
+// }
+
 function equivalent(t1, t2) {
   return (
     t1 === t2
-    // || t1.description === t2.description
-    //  ||
-    // (t1 instanceof core.OptionalType &&
-    //   t2 instanceof core.OptionalType &&
-    //   equivalent(t1.baseType, t2.baseType)) ||
-    // (t1 instanceof core.ArrayType &&
-    //   t2 instanceof core.ArrayType &&
-    //   equivalent(t1.baseType, t2.baseType)) ||
-    // (t1.constructor === core.FunctionType &&
-    //   t2.constructor === core.FunctionType &&
-    //   equivalent(t1.returnType, t2.returnType) &&
-    //   t1.paramTypes.length === t2.paramTypes.length &&
-    //   t1.paramTypes.every((t, i) => equivalent(t, t2.paramTypes[i])))
   );
 }
 
@@ -95,32 +83,34 @@ function assignable(fromType, toType) {
     // // covariant in return types
     // assignable(fromType.returnType, toType.returnType) &&
     // fromType.paramTypes.length === toType.paramTypes.length &&
-    // contravariant in parameter types
+    // //contravariant in parameter types
     // toType.paramTypes.every((t, i) => assignable(t, fromType.paramTypes[i])))
   );
 }
 
+
 function mustBeAssignable(e, { toType: type }, at) {
-  console.log(e.type);
+	// if (e.type.description === 'decaf'){
+	// 	e.type.description = 'regular'
+	// } else if (e.type.description === 'regular'){
+	// 	e.type.description = 'decaf'
+	// }
+//fix this
   must(
     assignable(e.type, type),
-    `Cannot assign a ${e.type.description} to a ${type.description}`,
+    `Cannot assign a ${e.type.description} to a ${type}`,
     at
   );
 }
 
-function fieldsMustBeDistinct(fields, at) {
-  const fieldNames = new Set(fields.map((f) => f.name));
-  must(fieldNames.size === fields.length, "Fields must be distinct", at);
-}
+// function mustNotBeReadOnly(e, at) {
+//     must(!e.readOnly, `Cannot assign to constant ${e.name}`, at);
+// }
 
-function memberMustBeDeclared(field, { in: structType }, at) {
-  must(
-    structType.fields.map((f) => f.name).includes(field),
-    "No such field",
-    at
-  );
-}
+// function fieldsMustBeDistinct(fields, at) {
+//   const fieldNames = new Set(fields.map((f) => f.name));
+//   must(fieldNames.size === fields.length, "Fields must be distinct", at);
+// }
 
 // function mustBeInLoop(context, at) {
 //   must(context.inLoop, "Break can only appear in a loop", at);
@@ -131,22 +121,22 @@ function mustBeInAFunction(context, at) {
 }
 
 function mustBeCallable(e, at) {
-  console.log(e.type);
-  console.log(e);
+  //console.log(e.type);
+//   console.log("f you", e);
+//   console.log("i hate you", e.constructor);
   must(
-    e.type.constructor == core.FunctionType,
+    e.type.constructor == core.FunctionType || e.constructor == core.FunctionType,
     "Call of non-function or non-constructor",
     at
   );
 }
 
 function mustReturnSomething(f, at) {
-  // console.log(f.type);
   must(f.type !== VOID, "Cannot return a value from this function", at);
 }
 
 function mustBeReturnable({ expression: e, from: f }, at) {
-  mustBeAssignable(e, { toType: f.type }, at);
+  mustBeAssignable(e, { toType: f.type.returnType }, at);
 }
 
 function argumentsMustMatch(args, targetTypes, at) {
@@ -192,7 +182,7 @@ class Context {
     return this.locals.has(name) || this.parent?.sees(name);
   }
   add(name, entity) {
-    // mustNotAlreadyBeDeclared(this, name);
+    mustNotAlreadyBeDeclared(this, name);
     this.locals.set(name, entity);
   }
   lookup(name) {
@@ -212,20 +202,18 @@ export default function analyze(sourceCode) {
     Program(body) {
       return new core.Program(body.rep());
     },
+
     VarDec(type, id, _eq, initializer) {
-      const initializerRep = initializer.rep();
-      console.log(type.rep());
+      const initializerExp = initializer.rep();
       const variable = new core.Variable(
         id.sourceString,
         false,
-        // initializerRep.type
-        type.rep()
+        initializerExp.type
       );
       context.add(id.sourceString, variable);
-      console.log(initializerRep);
-      console.log("VAR", id.sourceString, variable.type);
-      return new core.VariableDeclaration(variable, initializerRep);
+      return new core.VariableDeclaration(variable, initializerExp);
     },
+
     FuncDec(_fun, returnType, id, _point, _open, params, _close, body) {
       const rt = returnType.rep() ?? VOID;
       const paramReps = params.asIteration().rep();
@@ -237,14 +225,13 @@ export default function analyze(sourceCode) {
       context.add(id.sourceString, f);
       context = context.newChildContext({ inLoop: false, function: f });
       for (const p of paramReps) {
-        let variable = new core.Variable(p, true);
-        context.add(p.name, variable);
-        // context.add(p.name, p);
+        context.add(p.name, p);
       }
       const b = body.rep();
       context = context.parent;
       return new core.FunctionDeclaration(id.sourceString, f, paramReps, b);
     },
+
     ClassDec(_class, id, _start, constructor, method, _end) {
       const className = new core.Class(id.sourceString, true);
       context.add(id.sourceString, className);
@@ -283,6 +270,11 @@ export default function analyze(sourceCode) {
 
       return new core.ConstructorDeclaration(paramsRep, fieldRep);
     },
+
+	ParamType(type, id) {
+		return new core.Variable(id.sourceString, false, type.rep());
+	},
+
     MethodDec(
       _fun,
       returnType,
@@ -310,45 +302,44 @@ export default function analyze(sourceCode) {
       // const bodyRep = body.rep();
 
       // context = context.parent;
-      const rt = returnType.rep() ?? VOID;
+      const rt = returnType.rep()[0] ?? VOID;
       const paramReps = params.asIteration().rep();
-      const paramTypes = paramReps.map((p) => p.type);
+      const paramTypes = paramReps.map(p => p.type);
       const f = new core.Function(
-        id.sourceString,
-        new core.FunctionType(paramTypes, rt)
+          id.sourceString,
+          new core.FunctionType(paramTypes, rt)
       );
-      console.log("PARAM ", paramReps);
-      context.add(id.sourceString, f);
+	  context.add(id.sourceString, f);
       context = context.newChildContext({ inLoop: false, function: f });
       for (const p of paramReps) {
-        let variable = new core.Variable(p, true);
-        context.add(p.name, variable);
-        console.log("****");
-        console.log(variable);
-        context.add(p.name, p);
+          context.add(p.name, p);
       }
       const b = body.rep();
       context = context.parent;
-      return new core.MethodDeclaration(f, paramsRep, bodyRep);
+      return new core.MethodDeclaration(id.sourceString, f, paramReps, b);
     },
+
     Statement_assign(id, _eq, expression) {
       const e = expression.rep();
-      const v = context.lookup(id.rep());
+      const v = context.lookup(id.sourceString);
       mustBeAssignable(e, { toType: v.type });
-      // mustNotBeReadOnly(v);
+      //mustNotBeReadOnly(v);
       return new core.Assignment(v, e);
     },
+
     Statement_print(_print, argument) {
       return new core.PrintStatement(argument.rep());
     },
+
     LoopStmt_while(_while, test, body) {
       const t = test.rep();
-      mustHaveBooleanType(t);
+      //mustHaveBooleanType(t);
       context = context.newChildContext({ inLoop: true });
       const b = body.rep();
       context = context.parent;
       return new core.WhileStatement(t, b);
     },
+
     // IfStmt_short(_if, expression, body) {
     //   return new core.IfStatement(expression.rep(), body.rep(), elsebody.rep());
     // },
@@ -360,12 +351,13 @@ export default function analyze(sourceCode) {
       // context = context.parent;
       // return new core.ShortIfStatement(testRep, consequentRep);
       const expressionRep = expression.rep();
-      mustHaveBooleanType(expressionRep, expression);
+      //mustHaveBooleanType(expressionRep, expression);
       context = context.newChildContext();
       const elsebodyRep = elsebodyRep.rep();
       context = context.parent;
       return new core.IfStatement(expressionRep, body.rep(), elsebodyRep);
     },
+
     IfStmt_long(
       _if,
       expression,
@@ -387,43 +379,48 @@ export default function analyze(sourceCode) {
       }
       return new core.IfStatement(expression.rep(), body.rep());
     },
+
     UpdateExp(variable, operator) {
       const v = variable.rep();
-      console.log(v);
       mustHaveIntegerType(v);
       return operator.sourceString === "++"
         ? new core.Increment(v)
         : new core.Decrement(v);
     },
     Statement_return(returnRep, expression) {
-      mustBeInAFunction(context, returnRep);
+      mustBeInAFunction(context, returnRep); //
       mustReturnSomething(context.function);
       const e = expression.rep();
-      // mustBeReturnable({ expression: e, from: context.function });
+      mustBeReturnable({ expression: e, from: context.function }); //
       return new core.ReturnStatement(e);
     },
+
     Block(_open, body, _close) {
       return body.rep();
     },
+
     Exp_unary(op, operand) {
       return new core.UnaryExpression(op.rep(), operand.rep());
     },
+
     Exp_ternary(test, _questionMark, consequent, _colon, alternate) {
       const x = test.rep();
-      mustHaveBooleanType(x);
+      //mustHaveBooleanType(x);
       const [y, z] = [consequent.rep(), alternate.rep()];
-      mustBeTheSameType(y, z);
+      //mustBeTheSameType(y, z);
       return new core.Conditional(x, y, z);
     },
+
     //ask about op.rep(), do we need to specify the operators like +, -, *, ....
     Exp1_or(left, op, right) {
       let [x, o, y] = [left.rep(), op.rep()[0], right.rep()];
-      mustHaveBooleanType(x);
+      //mustHaveBooleanType(x);
       return new core.BinaryExpression(o, x, y, BOOLEAN);
     },
+
     Exp2_and(left, op, right) {
       let [x, o, y] = [left.rep(), op.rep(), right.rep()];
-      mustHaveBooleanType(x);
+      //mustHaveBooleanType(x);
       return new core.BinaryExpression(o, x, y, BOOLEAN);
       // for (let y of ys) {
       //   mustHaveBooleanType(y);
@@ -431,73 +428,95 @@ export default function analyze(sourceCode) {
       // }
       // return x;
     },
+
     Exp3_compare(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
       // if (["<", "<=", ">", ">="].includes(op.sourceString))
       // mustHaveNumericOrStringType(x);
-      mustBeTheSameType(x, y);
+      //mustBeTheSameType(x, y);
       return new core.BinaryExpression(o, x, y, BOOLEAN);
     },
+
     Exp4_add(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-      if (o === "+") {
+      if (o === "+" || o === "-") {
         mustHaveNumericOrStringType(x);
       } else {
         mustHaveNumericType(x);
       }
-      mustBeTheSameType(x, y);
+      //mustBeTheSameType(x, y);
       return new core.BinaryExpression(o, x, y, x.type);
     },
+
     Exp5_multiply(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-      mustHaveNumericType(x);
-      mustBeTheSameType(x, y);
-      return new core.BinaryExpression(o, x, y, x.type);
+      //mustHaveNumericType(x);
+      if (o === "*" || o === "/") {
+          mustHaveNumericOrStringType(x);
+      } else {
+          mustHaveNumericType(x);
+      }
+	  return new core.BinaryExpression(o, x, y, x.type);
     },
+
     Exp6_power(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
       mustHaveNumericType(x);
-      mustBeTheSameType(x, y);
+	  //console.log('y', y.type)
+	  //console.log('x', x.type)
+      //mustBeTheSameType(x, y);
       return new core.BinaryExpression(o, x, y, x.type);
     },
+
     Exp7_parens(_open, expression, _close) {
       return expression.rep();
     },
+
     Call(callee, _left, args, _right) {
-      const [c, a] = [callee.rep(), args.asIteration().rep()];
-      console.log(c.type);
+      let [c, a] = [callee.rep(), args.asIteration().rep()];
+      //console.log(context.lookup(c));
       mustBeCallable(c);
       // console.log(a);
       // callArgumentsMustMatch(a, c.type);
       return new core.Call(c, a);
     },
+
     Exp7_id(_id) {
       // When an id appears in an expr, it had better have been declared
+	  //console.log(context.lookup(this.sourceString));
       return context.lookup(this.sourceString);
     },
-    Type_id(id) {
-      const entity = context.lookup(id.sourceString);
-      entityMustBeAType(entity);
-      return entity;
-    },
+
+    // Type_id(id) {
+    //   const entity = context.lookup(id.sourceString);
+    //   entityMustBeAType(entity);
+    //   return entity;
+    // },
+
     id(_first, _rest) {
-      return this.sourceString;
+      return context.lookup(this.sourceString);
     },
+
     true(_) {
       return true;
     },
+
     false(_) {
       return false;
     },
+
     num(_whole, _point, _fraction, _e, _sign, _exponent) {
       return Number(this.sourceString);
     },
+
     stringlit(_open, _body, _close) {
       return String(this.sourceString);
     },
+
     _terminal() {
       return this.sourceString;
     },
+
     _iter(...children) {
       return children.map((child) => child.rep());
     }
