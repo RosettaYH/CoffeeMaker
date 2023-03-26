@@ -90,15 +90,9 @@ function assignable(fromType, toType) {
 
 
 function mustBeAssignable(e, { toType: type }, at) {
-	// if (e.type.description === 'decaf'){
-	// 	e.type.description = 'regular'
-	// } else if (e.type.description === 'regular'){
-	// 	e.type.description = 'decaf'
-	// }
-//fix this
   must(
     assignable(e.type, type),
-    `Cannot assign a ${e.type.description} to a ${type}`,
+    `Cannot assign a ${e.type.description} to a ${type.description}`,
     at
   );
 }
@@ -121,11 +115,8 @@ function mustBeInAFunction(context, at) {
 }
 
 function mustBeCallable(e, at) {
-  //console.log(e.type);
-//   console.log("f you", e);
-//   console.log("i hate you", e.constructor);
   must(
-    e.type.constructor == core.FunctionType || e.constructor == core.FunctionType,
+    e.type.constructor == core.FunctionType || e.constructor == core.FunctionType || e.type.constructor == core.ClassType || e.constructor == core.ClassType,
     "Call of non-function or non-constructor",
     at
   );
@@ -152,8 +143,8 @@ function callArgumentsMustMatch(args, calleeType, at) {
   argumentsMustMatch(args, calleeType.paramTypes, at);
 }
 
-function constructorArgumentsMustMatch(args, structType, at) {
-  const fieldTypes = structType.fields.map((f) => f.type);
+function constructorArgumentsMustMatch(args, classType, at) {
+  const fieldTypes = classType.fields.map(f => f.type);
   argumentsMustMatch(args, fieldTypes, at);
 }
 
@@ -253,7 +244,6 @@ export default function analyze(sourceCode) {
       _bodyClose,
       fields
     ) {
-      // TODO: modify to add fields
       params = params.asIteration().children;
       const cos = new core.Constructor(_self.sourceString, params.length, true);
 
@@ -275,33 +265,7 @@ export default function analyze(sourceCode) {
 		return new core.Variable(id.sourceString, false, type.rep());
 	},
 
-    MethodDec(
-      _fun,
-      returnType,
-      id,
-      _point,
-      _open,
-      _self,
-      _op,
-      params,
-      _close,
-      body
-    ) {
-      // // context = context.newChildContext({ inLoop: false, function: _fun });
-      // console.log(id.rep());
-      // params = params.asIteration().children;
-      // const fun = new core.Function(id.sourceString, params.length, true);
-      // console.log("Fun is", fun);
-      // context.add(id.rep(), fun);
-      // context = context.newChildContext({ inLoop: false, function: fun });
-      // const paramsRep = params.map((p) => {
-      //   let variable = new core.Variable(p.sourceString, true);
-      //   context.add(p.sourceString, variable);
-      //   return variable;
-      // });
-      // const bodyRep = body.rep();
-
-      // context = context.parent;
+    MethodDec(_fun, returnType, id, _point, _open, _self, _op, params, _close, body) {
       const rt = returnType.rep()[0] ?? VOID;
       const paramReps = params.asIteration().rep();
       const paramTypes = paramReps.map(p => p.type);
@@ -340,35 +304,7 @@ export default function analyze(sourceCode) {
       return new core.WhileStatement(t, b);
     },
 
-    // IfStmt_short(_if, expression, body) {
-    //   return new core.IfStatement(expression.rep(), body.rep(), elsebody.rep());
-    // },
-    IfStmt_short(_if, expression, body) {
-      // const testRep = test.rep();
-      // mustHaveBooleanType(testRep, test);
-      // context = context.newChildContext();
-      // const consequentRep = consequent.rep();
-      // context = context.parent;
-      // return new core.ShortIfStatement(testRep, consequentRep);
-      const expressionRep = expression.rep();
-      //mustHaveBooleanType(expressionRep, expression);
-      context = context.newChildContext();
-      const elsebodyRep = elsebodyRep.rep();
-      context = context.parent;
-      return new core.IfStatement(expressionRep, body.rep(), elsebodyRep);
-    },
-
-    IfStmt_long(
-      _if,
-      expression,
-      body,
-      _elseif,
-      elseifexp,
-      elseifbody,
-      _else,
-      elsebody
-    ) {
-      // TODO: needChange
+    IfStmt_long(_if, expression, body, _elseif, elseifexp, elseifbody, _else, elsebody) {
       const elseifexpRep = elseifexp.rep();
       const elseifbodyRep = elseifbody.rep();
       let c = elseifexpRep.map(function (exp, i) {
@@ -387,6 +323,7 @@ export default function analyze(sourceCode) {
         ? new core.Increment(v)
         : new core.Decrement(v);
     },
+
     Statement_return(returnRep, expression) {
       mustBeInAFunction(context, returnRep); //
       mustReturnSomething(context.function);
@@ -411,7 +348,6 @@ export default function analyze(sourceCode) {
       return new core.Conditional(x, y, z);
     },
 
-    //ask about op.rep(), do we need to specify the operators like +, -, *, ....
     Exp1_or(left, op, right) {
       let [x, o, y] = [left.rep(), op.rep()[0], right.rep()];
       //mustHaveBooleanType(x);
@@ -474,11 +410,14 @@ export default function analyze(sourceCode) {
 
     Call(callee, _left, args, _right) {
       let [c, a] = [callee.rep(), args.asIteration().rep()];
-      //console.log(context.lookup(c));
       mustBeCallable(c);
-      // console.log(a);
-      // callArgumentsMustMatch(a, c.type);
-      return new core.Call(c, a);
+	  if(c instanceof core.ClassType){
+		constructorArgumentsMustMatch(a, c)
+		return new core.ConstructorCall(c, a, c);
+	  } else {
+          callArgumentsMustMatch(a, c.type);
+          return new core.FunctionCall(c, a, c.type.returnType);
+      }
     },
 
     Exp7_id(_id) {
