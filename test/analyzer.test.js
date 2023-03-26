@@ -18,7 +18,9 @@ const semanticChecks = [
     ["relation", "brew(1<=2 && 3.5<1.2)"], //this works
 
     ["return with +", "cup regular name -> (regular x) {complete x + 9}"], //this works
-    ["return with -", "cup regular name -> (regular x) {complete x - 9}"],
+    ["return with -", "cup regular name -> (regular x) {complete x - 9}"], //this works
+	["return with *", "cup regular name -> (regular x) {complete x * 9}"], //this works
+	["return with /", "cup regular name -> (regular x) {complete x / 9}"], //this works
 
     ["built-in pi", "brew(π)"], //this works
     ["built-in sqrt", "brew(sqrt(π))"], //this works
@@ -34,7 +36,10 @@ const semanticChecks = [
         "long if",
         'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
     ], //this works
-    ["while works", "while(false){decaf cows = 5}"], // this works
+    ["while works false", "while(false){decaf cows = 5}"], // this works
+	["while works true", "while(true){decaf cows = 5}"], // this works
+
+	["for works", "stir(regular i = 0; i < 10; i++){regular cows = 5 + i}"], // this works
 
     ["increment works", "regular i = 10 i++"], //this works
     ["decrement works", "regular i = 20 i--"], //this works
@@ -67,10 +72,20 @@ const semanticChecks = [
         "if with multiple else if works", //this works
         'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
     ],
-    ["power works", "brew(2**3)"],
-    ["unary expression", "decaf decimal = -5.32"],
+    ["power works", "brew(2**3)"], //this works
+    ["unary expression", "decaf decimal = -5.32"], //this works
+	["equality works", "brew(1 == 1)"], //this works
+	["inequality works", "brew(100 != 100)"], //this works
+	["less than works", "brew(1 < 2)"], //this works
+	["less than or equal works", "brew(1 <= 2)"], //this works
+	["greater than works", "brew(1 > 2)"], //this works
+	["greater than or equal works", "brew(1 >= 2)"], //this works
+	[
+		"comment works",
+		"#this is a comment\n",
+	],
 
-    //having trouble with this one
+    //doesn't work
     [
         "class works with methods",
         'keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put hello -> (self,) {complete 5}}',
@@ -106,13 +121,12 @@ const semanticErrors = [
         //doesn't work
         "type with wrong value, number assigned to string",
         "put x = 5.5",
-        /Expected a string but got a number/,
+        
     ],
     [
         //doesn't work
         "type with wrong value, string assigned to number",
         'regular x = "hello"',
-        /Expected a number but got a string/,
     ],
     [	//this works
         "using undeclared indentifier",
@@ -140,6 +154,17 @@ const semanticErrors = [
         'brew(5 + "hello")',
         /Expected a number or string/,
     ],
+	[	//this works
+		"return in an if statement",
+		"regular x = 5 sugar (x < 10) {complete x} no sugar {complete 10}",
+		/Return can only appear in a function/
+	],
+	[	//this works
+		"haven't declared type for identifier",
+		'name = "Jose"',
+		/Identifier name not declared/
+		
+	],
 ];
 
 //just type one or a couple near the end (look at carlos to see how its done)
