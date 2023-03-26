@@ -17,8 +17,8 @@ export class VariableDeclaration {
 }
 
 export class FunctionDeclaration {
-  constructor(fun, params, body) {
-    Object.assign(this, { fun, params, body });
+  constructor(name, fun, params, body) {
+    Object.assign(this, {name, fun, params, body });
   }
 }
 
@@ -71,11 +71,6 @@ export class Variable {
   }
 }
 
-// export class Function {
-//   constructor(name, paramCount, readOnly) {
-//     Object.assign(this, { name, paramCount, readOnly });
-//   }
-// }
 export class Function {
   constructor(name, type) {
     Object.assign(this, { name, type });
@@ -119,8 +114,8 @@ export class Constructor {
 }
 
 export class MethodDeclaration {
-  constructor(name, params, body) {
-    Object.assign(this, { name, params, body });
+  constructor(name, meth, params, body) {
+    Object.assign(this, { name, meth, params, body });
   }
 }
 
@@ -159,6 +154,7 @@ export class FunctionType extends Type {
     Object.assign(this, { paramTypes, returnType });
   }
 }
+
 String.prototype.type = Type.STRING;
 Number.prototype.type = Type.FLOAT;
 BigInt.prototype.type = Type.INT;
