@@ -48,7 +48,7 @@ function mustHaveNumericOrStringType(e, at) {
 // }
 
 function mustHaveIntegerType(e, at) {
-  must(e.type === INT || e.type === FLOAT, "Expected an integer", at);
+  must(e.type == FLOAT || e.type == INT, "Expected an integer", at);
 }
 
 // function entityMustBeAType(e, at) {
@@ -304,6 +304,18 @@ export default function analyze(sourceCode) {
       return new core.WhileStatement(t, b);
     },
 
+	LoopStmt_for(_for, id, _in, low, op, high, body, _end, _end2){
+		const [x, y] = [low.rep(), high.rep()];
+		mustHaveIntegerType(x);
+		mustHaveIntegerType(y);
+		const iterator = new core.Variable(id.sourceString, true, INTEGER);
+		context = context.newChildContext({ inLoop: true });
+		context.add(id.sourceString, iterator)
+		const b = body.rep()
+		context = context.parent
+		return new core.ForStatement(iterator, x, op.rep(), y, b)
+	},
+
     IfStmt_long(_if, expression, body, _elseif, elseifexp, elseifbody, _else, elsebody) {
       const elseifexpRep = elseifexp.rep();
       const elseifbodyRep = elseifbody.rep();
@@ -375,7 +387,7 @@ export default function analyze(sourceCode) {
 
     Exp4_add(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-      if (o === "+" || o === "-") {
+      if (o == "+" || o == "-") {
         mustHaveNumericOrStringType(x);
       } else {
         mustHaveNumericType(x);
@@ -387,17 +399,21 @@ export default function analyze(sourceCode) {
     Exp5_multiply(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
       //mustHaveNumericType(x);
-      if (o === "*" || o === "/") {
-          mustHaveNumericOrStringType(x);
+      if (o == "*" || o == "/") {
+          mustHaveNumericOrStringType(x); 
       } else {
-          mustHaveNumericType(x);
-      }
+		  mustHaveIntegerType(x);
+	  }
 	  return new core.BinaryExpression(o, x, y, x.type);
     },
 
     Exp6_power(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-      mustHaveNumericType(x);
+	  if(o == '**' || o == '%') {
+		mustHaveNumericType(x);
+	  } else {
+		  mustHaveIntegerType(x);
+	  }
 	  //console.log('y', y.type)
 	  //console.log('x', x.type)
       //mustBeTheSameType(x, y);
