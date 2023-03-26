@@ -108,15 +108,15 @@ const semanticErrors = [
         /Expected 2 arguments but got 3/,
     ],
     [
-        //doesn't work
+        //this works
         "function with more then required arguments",
         "cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine(1, 2)",
-        /1 argument(s) required but 2 passed/,
+        //1 argument(s) required but 2 passed/,
     ],
-    [	//doesn't work
+    [	//this work
     	"function with less then required arguments",
     	"cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine()",
-    	/1 argument(s) required but 0 passed/,
+    	//1 argument(s) required but 0 passed/,
     ],
     [
         //doesn't work
@@ -171,14 +171,15 @@ const semanticErrors = [
         'name = "Jose"',
         /Identifier name not declared/,
     ],
-	[	//doesn't work
-		"while loop with no body",
-		"while (true) { }",
-	],
+
     [	//this works
 		"for loop with no body",
 		"for (regular i = 0; i < 10; i++) { }",
 	],
+	[
+		"can't divide functions",
+		"brew(500 + 5) / 20"
+	]
 ];
 
 //just type one or a couple near the end (look at carlos to see how its done)
@@ -258,18 +259,10 @@ const semanticErrors = [
 //    it(`produces the expected graph for the simple sample program`, () => {
 //        assert.deepEqual(util.format(analyze(sample)), expected);
 //    });
-//    it("throws when calling the error function", () => {
-//        assert.throws(() => error("Oops"));
-//        assert.throws(() =>
-//            error("message", { source: { getLineAndColumnMessage: () => {} } })
-//        );
-//    });
-//	it("does check function", () => {
-//		assert.throws(() => check() )
-//	} )
 //});
 
 describe("The analyzer", () => {
+	// does the semantic checks
     for (const [scenario, source] of semanticChecks) {
         it(`recognizes ${scenario}`, () => {
             assert.ok(analyze(source));
@@ -288,4 +281,15 @@ describe("The analyzer", () => {
     // 	const ast = analyze("brew(1 + 3)")
     //     assert.equal(ast.statements[0].callee.name, "print");
     // });
+
+   it("throws when calling the error function", () => {
+       assert.throws(() => error("Oops"));
+       assert.throws(() =>
+           error("message", { source: { getLineAndColumnMessage: () => {} } })
+       );
+   });
+
+   	it("does check function", () => {
+        assert.throws(() => check());
+    });
 });

@@ -159,6 +159,7 @@ export function error(message, node) {
 export function check(condition, message, node) {
   if (!condition) error(message, node);
 }
+
 class Context {
   constructor({
     parent = null,
@@ -281,7 +282,7 @@ export default function analyze(sourceCode) {
       const b = body.rep();
       context = context.parent;
       return new core.MethodDeclaration(id.sourceString, f, paramReps, b);
-    },
+	},
 
     Statement_assign(id, _eq, expression) {
       const e = expression.rep();
@@ -381,10 +382,7 @@ export default function analyze(sourceCode) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
       if (o == "+" || o == "-") {
         mustHaveNumericOrStringType(x);
-      } else {
-        mustHaveNumericType(x);
-      }
-      //mustBeTheSameType(x, y);
+	  }
       return new core.BinaryExpression(o, x, y, x.type);
     },
 
@@ -393,8 +391,6 @@ export default function analyze(sourceCode) {
       //mustHaveNumericType(x);
       if (o == "*" || o == "/") {
           mustHaveNumericOrStringType(x); 
-      } else {
-		  mustHaveIntegerType(x);
 	  }
 	  return new core.BinaryExpression(o, x, y, x.type);
     },
