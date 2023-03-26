@@ -133,6 +133,18 @@ export class Decrement {
   }
 }
 
+export class FunctionCall {
+	constructor(callee, args, type) {
+		Object.assign(this, { callee, args, type });
+  }
+}
+
+export class ConstructorCall {
+    constructor(callee, args, type) {
+        Object.assign(this, { callee, args, type });
+    }
+}
+
 export class Type {
   static INT = new Type("regular");
   static FLOAT = new Type("decaf");
@@ -144,6 +156,7 @@ export class Type {
     Object.assign(this, { description });
   }
 }
+
 export class FunctionType extends Type {
   constructor(paramTypes, returnType) {
     super(
@@ -153,6 +166,13 @@ export class FunctionType extends Type {
     );
     Object.assign(this, { paramTypes, returnType });
   }
+}
+
+export class ClassType extends Type {
+    constructor(name, fields) {
+        super(name);
+        Object.assign(this, { fields });
+    }
 }
 
 String.prototype.type = Type.STRING;
