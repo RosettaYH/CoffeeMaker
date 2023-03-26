@@ -39,7 +39,8 @@ const semanticChecks = [
     ["while works false", "while(false){decaf cows = 5}"], // this works
 	["while works true", "while(true){decaf cows = 5}"], // this works
 
-	["for works", "stir(regular i = 0; i < 10; i++){regular cows = 5 + i}"], // this works
+	//this works
+	["for works", "stir(regular i = 0; i < 10; i++){regular cows = 2 + i}"],
 
     ["increment works", "regular i = 10 i++"], //this works
     ["decrement works", "regular i = 20 i--"], //this works
@@ -112,23 +113,24 @@ const semanticErrors = [
         "cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine(1, 2)",
         /1 argument(s) required but 2 passed/,
     ],
-	[
-		"function with less then required arguments",
-		"cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine()",
-		/1 argument(s) required but 0 passed/,
-	],
+    [	//doesn't work
+    	"function with less then required arguments",
+    	"cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine()",
+    	/1 argument(s) required but 0 passed/,
+    ],
     [
         //doesn't work
         "type with wrong value, number assigned to string",
         "put x = 5.5",
-        
+
     ],
     [
         //doesn't work
         "type with wrong value, string assigned to number",
         'regular x = "hello"',
     ],
-    [	//this works
+    [
+        //this works
         "using undeclared indentifier",
         "brew(x)",
         /Identifier x not declared/,
@@ -139,31 +141,43 @@ const semanticErrors = [
         "put x = 5 x()",
         /Call of non-function or non-constructor/,
     ],
-    [	//this works
+    [
+        //this works
         "redeclaring variable",
         "put x = 5 put x = 6",
         /Identifier x already declared/,
     ],
-    [	//this works
+    [
+        //this works
         "subtracting string from number",
         'brew(5 - "hello")',
         /Expected a number or string/,
     ],
-    [	//this works
+    [
+        //this works
         "adding string to number",
         'brew(5 + "hello")',
         /Expected a number or string/,
     ],
-	[	//this works
-		"return in an if statement",
-		"regular x = 5 sugar (x < 10) {complete x} no sugar {complete 10}",
-		/Return can only appear in a function/
+    [
+        //this works
+        "return in an if statement",
+        "regular x = 5 sugar (x < 10) {complete x} no sugar {complete 10}",
+        /Return can only appear in a function/,
+    ],
+    [
+        //this works
+        "haven't declared type for identifier",
+        'name = "Jose"',
+        /Identifier name not declared/,
+    ],
+	[	//doesn't work
+		"while loop with no body",
+		"while (true) { }",
 	],
-	[	//this works
-		"haven't declared type for identifier",
-		'name = "Jose"',
-		/Identifier name not declared/
-		
+    [	//this works
+		"for loop with no body",
+		"for (regular i = 0; i < 10; i++) { }",
 	],
 ];
 

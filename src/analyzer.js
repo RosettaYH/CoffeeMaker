@@ -304,16 +304,8 @@ export default function analyze(sourceCode) {
       return new core.WhileStatement(t, b);
     },
 
-	LoopStmt_for(_for, id, _in, low, op, high, body, _end, _end2){
-		const [x, y] = [low.rep(), high.rep()];
-		mustHaveIntegerType(x);
-		mustHaveIntegerType(y);
-		const iterator = new core.Variable(id.sourceString, true, INTEGER);
-		context = context.newChildContext({ inLoop: true });
-		context.add(id.sourceString, iterator)
-		const b = body.rep()
-		context = context.parent
-		return new core.ForStatement(iterator, x, op.rep(), y, b)
+	LoopStmt_for(_for, _leftParan, id, _firstSemi, low, op, high, _secondSemi, body){
+		return new core.ForStatement(id, low, op, high, body)
 	},
 
     IfStmt_long(_if, expression, body, _elseif, elseifexp, elseifbody, _else, elsebody) {
