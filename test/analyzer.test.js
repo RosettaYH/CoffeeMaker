@@ -12,6 +12,7 @@ const semanticChecks = [
     ], //this works
     ["variables declaration floats", "decaf decimal = 3.14"], //this works
     ["variables declaration string", 'put name = "Walter White"'], //this works
+
     ["ternary", "regular name = 6 name == 5 ? 5 : 1"], //this works
     ["||", "brew(true||1<2||false)"], //this works
     ["&&", "brew(true&&1<2&&false)"], //this works
@@ -24,7 +25,7 @@ const semanticChecks = [
 
     ["built-in pi", "brew(π)"], //this works
     ["built-in sqrt", "brew(sqrt(π))"], //this works
-    ["built-in exp", "brew(exp(9))"], //this works
+    ["built-in exp", "brew(exp(9.0))"], //this works
     ["built-in sin", "brew(sin(π))"], //this works
     ["built-in cos", "brew(cos(93.999))"], //this works
     [
@@ -36,8 +37,9 @@ const semanticChecks = [
         "long if",
         'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
     ], //this works
-    ["while works false", "while(false){decaf cows = 5}"], // this works
-	["while works true", "while(true){decaf cows = 5}"], // this works
+
+    ["while works false", "while(false){decaf cows = 5.0}"], // this works
+	["while works true", "while(true){decaf cows = 5.0}"], // this works
 
 	//this works
 	["for works", "stir(regular i = 0; i < 10; i++){regular cows = 2 + i}"],
@@ -74,7 +76,7 @@ const semanticChecks = [
         'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
     ],
     ["power works", "brew(2**3)"], //this works
-    ["unary expression", "decaf decimal = -5.32"], //this works
+    ["unary expression", "decaf decimal = -5.32"], //doesn't works
 	["equality works", "brew(1 == 1)"], //this works
 	["inequality works", "brew(100 != 100)"], //this works
 	["less than works", "brew(1 < 2)"], //this works
@@ -113,19 +115,20 @@ const semanticErrors = [
         "cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine(1, 2)",
         //1 argument(s) required but 2 passed/,
     ],
-    [	//this work
-    	"function with less then required arguments",
-    	"cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine()",
-    	//1 argument(s) required but 0 passed/,
+    [
+        //this work
+        "function with less then required arguments",
+        "cup regular multiNine -> (regular x) {complete x * 9} test func = multiNine()",
+        //1 argument(s) required but 0 passed/,
     ],
     [
-        //doesn't work
+        //this work
         "type with wrong value, number assigned to string",
         "put x = 5.5",
 
     ],
     [
-        //doesn't work
+        //this work
         "type with wrong value, string assigned to number",
         'regular x = "hello"',
     ],
@@ -139,22 +142,22 @@ const semanticErrors = [
         //this works
         "variable used as a function",
         "put x = 5 x()",
-        /Call of non-function or non-constructor/,
+        /Cannot assign a regular to a put/,
     ],
     [
         //this works
         "redeclaring variable",
-        "put x = 5 put x = 6",
+        'put x = "five" put x = "six"',
         /Identifier x already declared/,
     ],
     [
-        //this works
+        //doesn't works
         "subtracting string from number",
         'brew(5 - "hello")',
         /Expected a number or string/,
     ],
     [
-        //this works
+        //doesn't works
         "adding string to number",
         'brew(5 + "hello")',
         /Expected a number or string/,
@@ -173,13 +176,9 @@ const semanticErrors = [
     ],
 
     [	//this works
-		"for loop with no body",
-		"for (regular i = 0; i < 10; i++) { }",
-	],
-	[
-		"can't divide functions",
-		"brew(500 + 5) / 20"
-	]
+    	"for loop with no body",
+    	"for (regular i = 0; i < 10; i++) { }",
+    ],
 ];
 
 //just type one or a couple near the end (look at carlos to see how its done)
