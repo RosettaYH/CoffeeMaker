@@ -44,6 +44,7 @@ CoffeeMaker {
   Exp6      = Exp7 "**" Exp6                          -- power
             | Exp7
   Exp7      = num
+			| int
             | true
             | false
             | Call
@@ -56,10 +57,7 @@ CoffeeMaker {
   Params    = ListOf<ParamType, ",">
   Args      = ListOf<Exp, ",">
 
-  Type      = "regular"                        
-            | "decaf"
-            | "put"
-            | id              -- id
+  Type      = id              -- id
 			
   ParamType = Type id 
 
@@ -83,7 +81,8 @@ CoffeeMaker {
   
   
   keyword   = function | print | while | for | in | true | false | if | elseif | else | class | construct | return | self | this
-  num       = digit+ ("." digit+)? (("E" | "e") ("+" | "-")? digit+)?
+  num       = digit+ ("." digit+) (("E" | "e") ("+" | "-")? digit+)?
+  int       = digit+
   id        = ~keyword letter idchar*
   idchar    = letter | digit | "_"
   stringlit = "\"" (~"\\" ~"\"" ~"\n" any )* "\""
