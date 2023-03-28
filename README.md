@@ -1,6 +1,6 @@
 <img src=./docs/imgs/logo.jpg width="300" height="300">
 
-# [CoffeeMaker](https://github.com/RosettaYH/CoffeeMaker)
+# [CoffeeMaker](https://rosettayh.github.io/CoffeeMaker/)
 
 ## Introduction
 
