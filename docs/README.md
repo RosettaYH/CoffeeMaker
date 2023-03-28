@@ -2,4 +2,4 @@
 
 Hosted by GitHub
 
-With reference to [https://dmoini.github.io/casper/](casper) and [https://jasoncd31.github.io/PiratesCode/](PiratesCode)
+With reference to [casper](https://dmoini.github.io/casper/) and [PiratesCode](https://jasoncd31.github.io/PiratesCode/)
