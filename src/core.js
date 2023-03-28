@@ -40,8 +40,8 @@ export class ForStatement{
 	}
 }
 export class PrintStatement {
-  constructor(argument) {
-    Object.assign(this, { argument });
+  constructor(argument, type) {
+    Object.assign(this, { argument, type });
   }
 }
 
@@ -64,8 +64,8 @@ export class BinaryExpression {
 }
 
 export class UnaryExpression {
-  constructor(op, operand) {
-    Object.assign(this, { op, operand });
+  constructor(op, operand, type) {
+    Object.assign(this, { op, operand, type });
   }
 }
 

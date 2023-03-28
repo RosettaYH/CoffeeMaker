@@ -330,7 +330,7 @@ export default function analyze(sourceCode) {
         },
 
         Statement_print(_print, argument) {
-            return new core.PrintStatement(argument.rep());
+            return new core.PrintStatement(argument.rep(), argument.sourceString);
         },
 
         LoopStmt_while(_while, test, body) {
@@ -386,10 +386,10 @@ export default function analyze(sourceCode) {
         },
 
         Statement_return(returnRep, expression) {
-            mustBeInAFunction(context, returnRep); //
+            mustBeInAFunction(context, returnRep); 
             mustReturnSomething(context.function);
             const e = expression.rep();
-            mustBeReturnable({ expression: e, from: context.function }); //
+            mustBeReturnable({ expression: e, from: context.function }); 
             return new core.ReturnStatement(e);
         },
 
@@ -398,7 +398,8 @@ export default function analyze(sourceCode) {
         },
 
         Exp_unary(op, operand) {
-            return new core.UnaryExpression(op.rep(), operand.rep());
+			mustHaveNumericOrStringType(operand.rep());
+            return new core.UnaryExpression(op.rep(), operand.rep(), operand.rep().type);
         },
 
         Exp_ternary(test, _questionMark, consequent, _colon, alternate) {
