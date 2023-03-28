@@ -44,9 +44,9 @@ function mustHaveNumericOrStringType(e, at) {
     );
 }
 
-// function mustHaveBooleanType(e, at) {
-//   must(e.type === BOOLEAN, "Expected a boolean", at);
-// }
+function mustHaveBooleanType(e, at) {
+  must(e.type === BOOLEAN, "Expected a boolean", at);
+}
 
 function mustHaveIntegerType(e, at) {
     must(e.type == FLOAT || e.type == INT, "Expected an integer", at);
@@ -304,7 +304,7 @@ export default function analyze(sourceCode) {
             _close,
             body
         ) {
-            const rt = returnType.rep()[0] ?? VOID;
+            const rt = returnType.rep() ?? VOID;
             const paramReps = params.asIteration().rep();
             const paramTypes = paramReps.map((p) => p.type);
             const f = new core.Function(
@@ -335,7 +335,7 @@ export default function analyze(sourceCode) {
 
         LoopStmt_while(_while, test, body) {
             const t = test.rep();
-            //mustHaveBooleanType(t);
+            mustHaveBooleanType(t);
             context = context.newChildContext({ inLoop: true });
             const b = body.rep();
             context = context.parent;
@@ -404,50 +404,43 @@ export default function analyze(sourceCode) {
 
         Exp_ternary(test, _questionMark, consequent, _colon, alternate) {
             const x = test.rep();
-            //mustHaveBooleanType(x);
+            mustHaveBooleanType(x);
             const [y, z] = [consequent.rep(), alternate.rep()];
-            //mustBeTheSameType(y, z);
             return new core.Conditional(x, y, z);
         },
 
         Exp1_or(left, op, right) {
             let [x, o, y] = [left.rep(), op.rep()[0], right.rep()];
-            //mustHaveBooleanType(x);
+            mustHaveBooleanType(x);
             return new core.BinaryExpression(o, x, y, BOOLEAN);
         },
 
         Exp2_and(left, op, right) {
             let [x, o, y] = [left.rep(), op.rep(), right.rep()];
-            //mustHaveBooleanType(x);
+            mustHaveBooleanType(x);
             return new core.BinaryExpression(o, x, y, BOOLEAN);
-            // for (let y of ys) {
-            //   mustHaveBooleanType(y);
-            //   x = new core.BinaryExpression(o, x, y, BOOLEAN);
-            // }
-            // return x;
         },
 
         Exp3_compare(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-            // if (["<", "<=", ">", ">="].includes(op.sourceString))
-            // mustHaveNumericOrStringType(x);
-            //mustBeTheSameType(x, y);
+            if (["<", "<=", ">", ">="].includes(op.sourceString)) {
+            	mustHaveNumericOrStringType(x);
+			}	
             return new core.BinaryExpression(o, x, y, BOOLEAN);
         },
 
         Exp4_add(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
             if (o == "+" || o == "-") {
-                mustHaveNumericOrStringType(x);
+				mustHaveNumericType(x);
             }
             return new core.BinaryExpression(o, x, y, x.type);
         },
 
         Exp5_multiply(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-            //mustHaveNumericType(x);
             if (o == "*" || o == "/") {
-                mustHaveNumericOrStringType(x);
+                mustHaveNumericType(x);
             }
             return new core.BinaryExpression(o, x, y, x.type);
         },
@@ -456,12 +449,7 @@ export default function analyze(sourceCode) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
             if (o == "**" || o == "%") {
                 mustHaveNumericType(x);
-            } //else {
-                //mustHaveIntegerType(x);
-            //}
-            //console.log('y', y.type)
-            //console.log('x', x.type)
-            //mustBeTheSameType(x, y);
+            }
             return new core.BinaryExpression(o, x, y, x.type);
         },
 

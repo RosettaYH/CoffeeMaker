@@ -85,12 +85,10 @@ const semanticChecks = [
     ["greater than or equal works", "brew(1 >= 2)"], //this works
     ["comment works", "#this is a comment\n"],
 
-    //doesn't work
+    //this works
     [
         "class works with methods",
-        "keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup decaf name -> (self, put x) {complete x}}", //complete causing issue
-		//"keurig Person { create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup decaf div -> (self, decaf x, decaf y) { x / y}}"
-		//says vars in params is undefined 
+        "keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put name -> (self, put x) {complete x}}", //complete causing issue
     ],
 ];
 
