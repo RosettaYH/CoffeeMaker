@@ -30,13 +30,6 @@ function mustHaveNumericType(e, at) {
 }
 
 function mustHaveNumericOrStringType(e, at) {
-    // console.log([INT.description, FLOAT.description, STRING.description].includes(e.type));
-    // console.log("INT", INT.description)
-    // console.log("FLOAT", FLOAT.description)
-    // console.log("STRING", STRING)
-    // console.log("e.type", e.type)
-    // console.log(e.type.description === FLOAT.description)
-
     must(
         [INT, FLOAT, STRING].includes(e.type),
         "Expected a number or string",
@@ -45,7 +38,7 @@ function mustHaveNumericOrStringType(e, at) {
 }
 
 function mustHaveBooleanType(e, at) {
-  must(e.type === BOOLEAN, "Expected a boolean", at);
+    must(e.type === BOOLEAN, "Expected a boolean", at);
 }
 
 function mustHaveIntegerType(e, at) {
@@ -56,18 +49,13 @@ function entityMustBeAType(e, at) {
     must(e instanceof core.Type, "Type expected", at);
 }
 
-// function mustBeTheSameType(e1, e2, at) {
-//   must(equivalent(e1.type, e2.type), "Operands do not have the same type", at);
-// }
-
-// function mustAllHaveSameType(expressions, at) {
-//   // Used to check array elements, for example
-//   must(
-//     expressions.slice(1).every((e) => equivalent(e.type, expressions[0].type)),
-//     "Not all elements have the same type",
-//     at
-//   );
-// }
+function mustBeTheSameType(e1, e2, at) {
+    must(
+        equivalent(e1.type, e2.type),
+        "Operands do not have the same type",
+        at
+    );
+}
 
 function equivalent(t1, t2) {
     return t1 === t2;
@@ -76,14 +64,6 @@ function equivalent(t1, t2) {
 function assignable(fromType, toType) {
     return (
         toType == ANY || equivalent(fromType, toType)
-        // ||
-        // (fromType.constructor === core.FunctionType &&
-        //   toType.constructor === core.FunctionType &&
-        // // covariant in return types
-        // assignable(fromType.returnType, toType.returnType) &&
-        // fromType.paramTypes.length === toType.paramTypes.length &&
-        // //contravariant in parameter types
-        // toType.paramTypes.every((t, i) => assignable(t, fromType.paramTypes[i])))
     );
 }
 
@@ -95,29 +75,13 @@ function mustBeAssignable(e, { toType: type }, at) {
     );
 }
 
-// function mustNotBeReadOnly(e, at) {
-//     must(!e.readOnly, `Cannot assign to constant ${e.name}`, at);
-// }
-
-// function fieldsMustBeDistinct(fields, at) {
-//   const fieldNames = new Set(fields.map((f) => f.name));
-//   must(fieldNames.size === fields.length, "Fields must be distinct", at);
-// }
-
-// function mustBeInLoop(context, at) {
-//   must(context.inLoop, "Break can only appear in a loop", at);
-// }
-
 function mustBeInAFunction(context, at) {
     must(context.function, "Return can only appear in a function", at);
 }
 
 function mustBeCallable(e, at) {
     must(
-        e.type.constructor == core.FunctionType ||
-            e.constructor == core.FunctionType ||
-            e.type.constructor == core.ClassType ||
-            e.constructor == core.ClassType,
+            e.type.constructor == core.FunctionType,
         "Call of non-function or non-constructor",
         at
     );
@@ -144,11 +108,6 @@ function argumentsMustMatch(args, targetTypes, at) {
 
 function callArgumentsMustMatch(args, calleeType, at) {
     argumentsMustMatch(args, calleeType.paramTypes, at);
-}
-
-function constructorArgumentsMustMatch(args, classType, at) {
-    const fieldTypes = classType.fields.map((f) => f.type);
-    argumentsMustMatch(args, fieldTypes, at);
 }
 
 // Throw an error message that takes advantage of Ohm's messaging
@@ -211,20 +170,12 @@ export default function analyze(sourceCode) {
                 type.rep()
             );
             context.add(id.sourceString, variable);
-            // console.log(
-            //     "Var:",
-            //     util.inspect(variable, { showHidden: false, depth: null })
-            // );
-            // console.log(
-            //     "Init:",
-            //     util.inspect(initializerExp, { showHidden: false, depth: null })
-            // );
             mustBeAssignable(initializerExp, { toType: variable.type }, id);
             return new core.VariableDeclaration(variable, initializerExp);
         },
 
         FuncDec(_fun, returnType, id, _point, _open, params, _close, body) {
-            const rt = returnType.rep() ?? VOID;
+            const rt = returnType.rep();
             const paramReps = params.asIteration().rep();
             const paramTypes = paramReps.map((p) => p.type);
             const f = new core.Function(
@@ -304,12 +255,11 @@ export default function analyze(sourceCode) {
             _close,
             body
         ) {
-            const rt = returnType.rep() ?? VOID;
             const paramReps = params.asIteration().rep();
             const paramTypes = paramReps.map((p) => p.type);
             const f = new core.Function(
                 id.sourceString,
-                new core.FunctionType(paramTypes, rt)
+                new core.FunctionType(paramTypes, returnType.rep())
             );
             context.add(id.sourceString, f);
             context = context.newChildContext({ inLoop: false, function: f });
@@ -325,12 +275,14 @@ export default function analyze(sourceCode) {
             const e = expression.rep();
             const v = context.lookup(id.sourceString);
             mustBeAssignable(e, { toType: v.type });
-            //mustNotBeReadOnly(v);
             return new core.Assignment(v, e);
         },
 
         Statement_print(_print, argument) {
-            return new core.PrintStatement(argument.rep(), argument.sourceString);
+            return new core.PrintStatement(
+                argument.rep(),
+                argument.sourceString
+            );
         },
 
         LoopStmt_while(_while, test, body) {
@@ -386,10 +338,10 @@ export default function analyze(sourceCode) {
         },
 
         Statement_return(returnRep, expression) {
-            mustBeInAFunction(context, returnRep); 
+            mustBeInAFunction(context, returnRep);
             mustReturnSomething(context.function);
             const e = expression.rep();
-            mustBeReturnable({ expression: e, from: context.function }); 
+            mustBeReturnable({ expression: e, from: context.function });
             return new core.ReturnStatement(e);
         },
 
@@ -398,8 +350,12 @@ export default function analyze(sourceCode) {
         },
 
         Exp_unary(op, operand) {
-			mustHaveNumericOrStringType(operand.rep());
-            return new core.UnaryExpression(op.rep(), operand.rep(), operand.rep().type);
+            mustHaveNumericOrStringType(operand.rep());
+            return new core.UnaryExpression(
+                op.rep(),
+                operand.rep(),
+                operand.rep().type
+            );
         },
 
         Exp_ternary(test, _questionMark, consequent, _colon, alternate) {
@@ -411,35 +367,40 @@ export default function analyze(sourceCode) {
 
         Exp1_or(left, op, right) {
             let [x, o, y] = [left.rep(), op.rep()[0], right.rep()];
+            mustBeTheSameType(x, y);
             mustHaveBooleanType(x);
             return new core.BinaryExpression(o, x, y, BOOLEAN);
         },
 
         Exp2_and(left, op, right) {
             let [x, o, y] = [left.rep(), op.rep(), right.rep()];
+            mustBeTheSameType(x, y);
             mustHaveBooleanType(x);
             return new core.BinaryExpression(o, x, y, BOOLEAN);
         },
 
         Exp3_compare(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
+            mustBeTheSameType(x, y);
             if (["<", "<=", ">", ">="].includes(op.sourceString)) {
-            	mustHaveNumericOrStringType(x);
-			}	
+                mustHaveNumericOrStringType(x);
+            }
             return new core.BinaryExpression(o, x, y, BOOLEAN);
         },
 
         Exp4_add(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
+            mustBeTheSameType(x, y);
             if (o == "+" || o == "-") {
-				mustHaveNumericType(x);
+                mustHaveNumericType(x);
             }
             return new core.BinaryExpression(o, x, y, x.type);
         },
 
         Exp5_multiply(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-            if (o == "*" || o == "/") {
+            mustBeTheSameType(x, y);
+            if (o == "*" || o == "/" || o == "%") {
                 mustHaveNumericType(x);
             }
             return new core.BinaryExpression(o, x, y, x.type);
@@ -447,7 +408,7 @@ export default function analyze(sourceCode) {
 
         Exp6_power(left, op, right) {
             const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-            if (o == "**" || o == "%") {
+            if (o == "**") {
                 mustHaveNumericType(x);
             }
             return new core.BinaryExpression(o, x, y, x.type);
@@ -460,13 +421,8 @@ export default function analyze(sourceCode) {
         Call(callee, _left, args, _right) {
             let [c, a] = [callee.rep(), args.asIteration().rep()];
             mustBeCallable(c);
-            if (c instanceof core.ClassType) {
-                constructorArgumentsMustMatch(a, c);
-                return new core.ConstructorCall(c, a, c);
-            } else {
-                callArgumentsMustMatch(a, c.type);
-                return new core.FunctionCall(c, a, c.type.returnType);
-            }
+            callArgumentsMustMatch(a, c.type);
+            return new core.FunctionCall(c, a, c.type.returnType);
         },
 
         Exp7_id(_id) {
@@ -514,9 +470,6 @@ export default function analyze(sourceCode) {
         },
     });
 
-    // for (const [name, entity] of Object.entries(core.standardLibrary)) {
-    //   context.locals.set(name, entity);
-    // }
     for (const [name, type] of Object.entries(stdlib.contents)) {
         context.add(name, type);
     }

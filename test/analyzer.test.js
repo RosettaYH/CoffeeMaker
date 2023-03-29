@@ -22,6 +22,7 @@ const semanticChecks = [
     ["return with -", "cup regular name -> (regular x) {complete x - 9}"], //this works
     ["return with *", "cup regular name -> (regular x) {complete x * 9}"], //this works
     ["return with /", "cup regular name -> (regular x) {complete x / 9}"], //this works
+    ["return with %", "cup regular name -> (regular x) {complete x % 9}"], //this works
 
     ["built-in pi", "brew(π)"], //this works
     ["built-in sqrt", "brew(sqrt(π))"], //this works
@@ -52,7 +53,7 @@ const semanticChecks = [
     ], //this works
     [
         "function works with division and decaf",
-        "cup decaf name -> (decaf x) {complete x / 9}",
+        "cup decaf name -> (decaf x) {complete x / 9.2}",
     ], //this works
 
     [
@@ -75,7 +76,8 @@ const semanticChecks = [
         "if with multiple else if works", //this works
         'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
     ],
-    ["power works", "brew(2**3)"], //this works
+    ["remainder works", "brew(5%2)"], //this works
+	["power works", "brew(2**3)"], //this works
     ["unary expression", "decaf decimal = -5.32"], //this works
     ["equality works", "brew(1 == 1)"], //this works
     ["inequality works", "brew(100 != 100)"], //this works
@@ -83,12 +85,12 @@ const semanticChecks = [
     ["less than or equal works", "brew(1 <= 2)"], //this works
     ["greater than works", "brew(1 > 2)"], //this works
     ["greater than or equal works", "brew(1 >= 2)"], //this works
-    ["comment works", "#this is a comment\n"],
+    ["comment works", "#this is a comment\n"], //this works
 
     //this works
     [
         "class works with methods",
-        "keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put name -> (self, put x) {complete x}}", //complete causing issue
+        "keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put name -> (self, put x) {x}}",
     ],
 ];
 
@@ -265,18 +267,20 @@ describe("The analyzer", () => {
         });
     }
 
-    // does the semantic errors, will do later
+    // does the semantic errors
     for (const [scenario, source, errorMessagePattern] of semanticErrors) {
         it(`throws on ${scenario}`, () => {
             assert.throws(() => analyze(source), errorMessagePattern);
         });
     }
 
-    //will do this last (AST stuff)
-    // it(`builds an unoptimized AST for a simple program`, () => {
-    // 	const ast = analyze("brew(1 + 3)")
-    //     assert.equal(ast.statements[0].callee.name, "print");
-    // });
+    //(AST stuff)
+    it(`builds an unoptimized AST for a simple program`, () => {
+    	const ast = analyze("brew(1 + 3)")
+		assert.equal(ast.statements.length, 1);
+		assert.equal(ast.statements[0].type, "(1 + 3)");
+        assert.ok(util.inspect(ast))
+    });
 
    it("throws when calling the error function", () => {
        assert.throws(() => error("Oops"));

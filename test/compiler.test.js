@@ -1,6 +1,8 @@
 import assert from "assert/strict";
 import util from "util";
 import compile from "../src/compiler.js";
+import optimize from "../src/optimizer.js";
+import generate from "../src/generator.js";
 
 const sampleProgram = 'brew("A cup of coffee")';
 
@@ -27,4 +29,14 @@ describe("The compiler", () => {
   //     assert(util.format(compiled).startsWith("console.log(0)"));
   //     done();
   //   });
+  it("throw when optimizer is not done", (done) => {
+	assert.throws(() => optimize())
+	done();
+	})
+
+	it("throw when optimizer is not done", (done) => {
+	assert.throws(() => generate())
+	done();
+	})
 });
+
