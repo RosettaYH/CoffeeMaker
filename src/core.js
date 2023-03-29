@@ -45,12 +45,6 @@ export class PrintStatement {
   }
 }
 
-export class Call {
-  constructor(callee, args) {
-    Object.assign(this, { callee, args });
-  }
-}
-
 export class Conditional {
   constructor(test, consequent, alternate) {
     Object.assign(this, { test, consequent, alternate });
@@ -144,12 +138,6 @@ export class FunctionCall {
   }
 }
 
-export class ConstructorCall {
-    constructor(callee, args, type) {
-        Object.assign(this, { callee, args, type });
-    }
-}
-
 export class Type {
   static INT = new Type("regular");
   static FLOAT = new Type("decaf");
@@ -171,13 +159,6 @@ export class FunctionType extends Type {
     );
     Object.assign(this, { paramTypes, returnType });
   }
-}
-
-export class ClassType extends Type {
-    constructor(name, fields) {
-        super(name);
-        Object.assign(this, { fields });
-    }
 }
 
 String.prototype.type = Type.STRING;
