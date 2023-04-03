@@ -17,14 +17,20 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 
 <table>
   <tr>
-    <th>Java</th>
+    <th>Static Type</th>
     <th>CoffeeMaker</th>
   </tr>
   <tr>
-    <td>let</td>
-    <td>put (for strings)</td>
-	<td>regular (for numbers)</td>
-	<td>decaf (for decimals)</td>
+    <td>Numbers (from Javascript)</td>
+	<td>regular</td>
+  </tr>
+  <tr>
+    <td>Decimals (from Javascript)</td>
+	<td>decaf</td>
+  </tr>
+  <tr>
+    <td>Strings (from Javascript)</td>
+	<td>put</td>
   </tr>
   <tr>
     <td>function</td>
