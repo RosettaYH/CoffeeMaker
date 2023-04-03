@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee? Do you need that little bit of extra caffeine to get you going through the morning or night? Want to be able to go to Starbucks or Dunkin Donuts or any of your favorite coffee shops? You are in the right place with our coffeemaker language here! Ready to recreate Espresso, Macchiato, Americano, Latte, Cappuccino, and the others that come to your mind? After a few minutes in our coffeemaker, you will be able to create and taste your very own coffee! Are you ready to replicate or even surpass the “great” Starbucks?
+Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee? Do you need that little bit of extra caffeine to get you going through the morning or night? Want to be able to go to Starbucks or Dunkin Donuts or any of your favorite coffee shops? You are in the right place with our coffeemaker language here! Ready to recreate Espresso, Macchiato, Americano, Latte, Cappuccino, and the others that come to your mind? After a few minutes in our coffeemaker, you will be able to create and taste your very own coffee! Are you ready to replicate or even surpass the “great” Starbucks? Check out our site here: https://rosettayh.github.io/CoffeeMaker/
 
 ## Features
 
@@ -12,6 +12,54 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 -   Coffee-themed
 -   Loops
 -   Classes
+
+## Types
+
+<table>
+  <tr>
+    <th>Java</th>
+    <th>CoffeeMaker</th>
+  </tr>
+  <tr>
+    <td>let</td>
+    <td>put (for strings)</td>
+	<td>regular (for numbers)</td>
+	<td>decaf (for decimals)</td>
+  </tr>
+  <tr>
+    <td>function</td>
+    <td>cup</td>
+  </tr>
+</table>
+
+## Other Keywords
+
+<table>
+  <tr>
+    <th>Javascript</th>
+    <th>CoffeeMaker</th>
+  </tr>
+  <tr>
+    <td>function</td>
+    <td>cup</td>
+  </tr>
+  <tr>
+    <td>for</td>
+    <td>stir</td>
+  </tr>
+  <tr>
+    <td>if</td>
+    <td>sugar</td>
+  </tr>
+  <tr>
+    <td>else if</td>
+    <td>salt</td>
+  </tr>
+  <tr>
+    <td>else</td>
+    <td>no salt</td>
+  </tr>
+</table>
 
 ## Examples
 
@@ -192,5 +240,17 @@ keurig Car {
 
 </td>
 </table>
+
+## List of Static Semantic Errors
+- Use of undeclared identifiers.
+- Variable used as a function.
+- Redeclaring an already declared identifier.
+- Value returned outside of function.
+- decrementing/incrementing a string
+- function with more arguments then allowed
+- wrong types for identifiers 
+- return in just inside if statement 
+- for loop with no body 
+- Variable used within a loop is declared and initialized outside of the loop.
 
 #### Authors: Rosetta Yu and Jose Fuentes
