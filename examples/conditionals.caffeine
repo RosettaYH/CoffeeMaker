@@ -8,8 +8,3 @@ sugar (age < 18) {
 } no sugar {
     brew("Errr, good luck in adulthood :p")
 }
-
-decaf money = 5.1
-sugar (money < 6.0) {
-	complete(money)
-}
