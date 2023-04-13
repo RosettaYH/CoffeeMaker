@@ -44,7 +44,7 @@ CoffeeMaker {
   Exp6      = Exp7 "**" Exp6                          -- power
             | Exp7
   Exp7      = num
-			| int
+			      | int
             | true
             | false
             | Call
