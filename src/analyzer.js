@@ -285,7 +285,13 @@ export default function analyze(sourceCode) {
       _secondSemi,
       body
     ) {
-      return new core.ForStatement(id, low, op, high, body);
+      return new core.ForStatement(
+        id.sourceString,
+        low.rep(),
+        op.sourceString,
+        high.rep(),
+        body.rep()
+      );
     },
 
     IfStmt_long(

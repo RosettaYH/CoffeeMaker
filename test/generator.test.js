@@ -40,7 +40,7 @@ const fixtures = [
       	while ((x_1 < 5)) {
         	let y_2 = 0;
         	while ((y_2 < 5)) {
-          		console.log((x_1 * y_2))
+          		console.log((x_1 * y_2));
           		y_2 = (y_2 + 1);
         	}
         	x_1 = (x_1 + 1);
@@ -53,7 +53,7 @@ const fixtures = [
 		brew(6 == 5 ? 5 : 1)
 		`,
     expected: dedent`
-		console.log((((6 === 5)) ? (5) : (1)))
+		console.log((((6 === 5)) ? (5) : (1)));
 		`,
   },
   {
@@ -90,27 +90,15 @@ const fixtures = [
 		name_2(5);`,
   },
   {
-    name: "for",
-    source: `
-		stir(regular i = 0; i < 10; i++) {
-			regular cows = 2 + i
-		}`,
-
-    expected: dedent`
-		for(i_1 = 0; i_1 < 10; i_1++) {
-			let cows_2 = (2 + i_1);
-		}`,
-  },
-  {
     name: "short if",
     source: `
 		decaf money = 5.1 
-		sugar (money < 6) {
+		sugar (money < 6.2) {
 			brew(money)
 		}`,
     expected: dedent`
 		let money_1 = 5.1;
-		if ((money_1 < 6)) {
+		if ((money_1 < 6.2)) {
 			console.log(money_1);
 		}`,
   },

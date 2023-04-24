@@ -1,0 +1,9 @@
+keurig Person {
+	create(self, put name, regular birthDate) {
+		this.name = name 
+		this.birthDate = birthDate
+	} 
+	cup put name -> (self, put x) {
+		complete x
+	}
+}

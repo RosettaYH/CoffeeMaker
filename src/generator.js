@@ -86,7 +86,7 @@ export default function generate(program) {
 
     PrintStatement(s) {
       const argument = gen(s.argument);
-      output.push(`console.log(${argument})`);
+      output.push(`console.log(${argument});`);
     },
 
     ExpStatement(s) {
@@ -132,6 +132,10 @@ export default function generate(program) {
       console.log(s.alternate);
       output.push(`if (${gen(s.test)}) {`);
       gen(s.consequent);
+      if (s.alternate) {
+        output.push("} else {");
+        gen(s.alternate);
+      }
       output.push("}");
     },
 
@@ -148,9 +152,9 @@ export default function generate(program) {
       //     method;
       // }
       // output.push("}");
-      output.push(`class ${targetName(s.declaration)} {`);
-      gen(s.declaration.constructorDec);
-      for (let method of s.declaration.methods) {
+      output.push(`class ${targetName(s)} {`);
+      gen(s.constructorDec);
+      for (let method of s.methods) {
         gen(method);
       }
       output.push("}");
@@ -164,10 +168,8 @@ export default function generate(program) {
     //constructor declaration doesn't work
     ConstructorDeclaration(s) {
       output.push(`create (${s.parameters.join(",")}) {`);
-      for (let f of s.body) {
-        output.push(
-          `this."${targetName(f.variable)}" = ${targetName(f.initializer)}`
-        );
+      for (let p of s.parameters) {
+        output.push(`this."${targetName(p)}" = ${targetName(p)}`);
       }
       output.push("}");
     },
@@ -179,7 +181,7 @@ export default function generate(program) {
 
     //method declaration doesn't work
     MethodDeclaration(s) {
-      output.push(`${s.method} (${s.parameters.join(",")}) {`);
+      output.push(`${s.method} (${s.params.join(",")}) {`);
       gen(s.body);
       output.push("}");
     },

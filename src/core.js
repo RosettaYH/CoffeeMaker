@@ -39,6 +39,7 @@ export class ForStatement {
     Object.assign(this, { iterator, low, op, high, body });
   }
 }
+
 export class PrintStatement {
   constructor(argument, type) {
     Object.assign(this, { argument, type });

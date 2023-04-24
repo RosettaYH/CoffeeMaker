@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import util from "util";
 import process from "process";
 import compile from "./compiler.js";
 
@@ -16,9 +17,11 @@ Prints to stdout according to <outputType>, which must be one of:
 async function compileFromFile(filename, outputType) {
   try {
     const buffer = await fs.readFile(filename);
-    console.log(compile(buffer.toString(), outputType));
+    const result = compile(buffer.toString(), outputType);
+    console.log(result);
   } catch (e) {
     console.error(`\u001b[31m${e}\u001b[39m`);
+    throw e;
     process.exitCode = 1;
   }
 }
