@@ -50,10 +50,6 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
     <td>cup</td>
   </tr>
   <tr>
-    <td>for</td>
-    <td>stir</td>
-  </tr>
-  <tr>
     <td>if</td>
     <td>sugar</td>
   </tr>
@@ -256,7 +252,6 @@ keurig Car {
 - function with more arguments then allowed
 - wrong types for identifiers 
 - return in just inside if statement 
-- for loop with no body 
 - Variable used within a loop is declared and initialized outside of the loop.
 
 #### Authors: Rosetta Yu and Jose Fuentes
