@@ -16,7 +16,6 @@ const syntaxChecks = [
     ["the conditional operator", "brew(x ? y : z)"],
     ["comments okay at end of program", "brew(0) #yay\n"],
     ["non-Latin letters in identifiers", "regular コンパイラ = 100"],
-    ["for loops", "stir(regular i = 0; i < 10; i++) {brew(i)}"],
     ["if statements", "sugar(true) {brew(1)} no sugar {brew(2)}"],
     [
         "while loops",
@@ -52,9 +51,6 @@ const syntaxErrors = [
     ["an expression starting with a ||", "x = || 71", /Line 1, col 5/],
     ["an expression starting with a ?", "x = ? 71", /Line 1, col 5/],
     ["an expression starting with a :", "x = : 71", /Line 1, col 5/],
-	["for loop with no condition", "stir(regular i = 0; ; i++) {brew(i)}", /Line 1, col 21/],
-	["for loop with no increment", "stir(regular i = 0; i < 10; ) {brew(i)}", /Line 1, col 29/],
-	["for loop with no body", "stir(regular i = 0; i < 10; i++)", /Line 1, col 33/],
 	["while loop with no condition", "regular x = 0 while {regular y = 0 while y < 5 {brew(x * y) y = y + 1} x = x + 1}", /Line 1, col 21/],
 	["while loop with no body", "regular x = 0 while x < 5", /Line 1, col 26/],
 	["if statement with no condition", "sugar() {brew(1)} no sugar {brew(2)}", /Line 1, col 7/],

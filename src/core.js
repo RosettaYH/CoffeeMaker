@@ -34,12 +34,6 @@ export class WhileStatement {
   }
 }
 
-export class ForStatement {
-  constructor(iterator, low, op, high, body) {
-    Object.assign(this, { iterator, low, op, high, body });
-  }
-}
-
 export class PrintStatement {
   constructor(argument, type) {
     Object.assign(this, { argument, type });

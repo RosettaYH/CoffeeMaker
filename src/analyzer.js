@@ -274,26 +274,6 @@ export default function analyze(sourceCode) {
       return new core.WhileStatement(t, b);
     },
 
-    LoopStmt_for(
-      _for,
-      _leftParan,
-      id,
-      _firstSemi,
-      low,
-      op,
-      high,
-      _secondSemi,
-      body
-    ) {
-      return new core.ForStatement(
-        id.sourceString,
-        low.rep(),
-        op.sourceString,
-        high.rep(),
-        body.rep()
-      );
-    },
-
     IfStmt_long(
       _if,
       expression,
