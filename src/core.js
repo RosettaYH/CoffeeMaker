@@ -18,7 +18,7 @@ export class VariableDeclaration {
 
 export class FunctionDeclaration {
   constructor(name, fun, params, body) {
-    Object.assign(this, {name, fun, params, body });
+    Object.assign(this, { name, fun, params, body });
   }
 }
 
@@ -34,10 +34,10 @@ export class WhileStatement {
   }
 }
 
-export class ForStatement{
-	constructor(iterator, low, op, high, body){
-		Object.assign(this, {iterator, low, op, high, body});
-	}
+export class ForStatement {
+  constructor(iterator, low, op, high, body) {
+    Object.assign(this, { iterator, low, op, high, body });
+  }
 }
 export class PrintStatement {
   constructor(argument, type) {
@@ -79,6 +79,12 @@ export class Function {
 export class IfStatement {
   constructor(test, consequent, alternate) {
     Object.assign(this, { test, consequent, alternate });
+  }
+}
+
+export class ExpStatement {
+  constructor(expression) {
+    this.expression = expression;
   }
 }
 
@@ -133,8 +139,8 @@ export class Decrement {
 }
 
 export class FunctionCall {
-	constructor(callee, args, type) {
-		Object.assign(this, { callee, args, type });
+  constructor(callee, args, type) {
+    Object.assign(this, { callee, args, type });
   }
 }
 

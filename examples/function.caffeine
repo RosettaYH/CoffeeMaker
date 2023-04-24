@@ -1,3 +1,7 @@
-cup regular add -> (x, y) {
-	complete(x + y)
+cup regular add -> (regular x, regular y) {
+	complete x + y
 }
+3
+brew("hello")
+add(2, 300)
+brew("hello")

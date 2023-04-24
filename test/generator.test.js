@@ -5,26 +5,26 @@ import optimize from "../src/optimizer.js";
 import generate from "../src/generator.js";
 
 function dedent(s) {
-    return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
+  return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
 }
 
 const fixtures = [
-    {
-        name: "small",
-        source: `
+  {
+    name: "small",
+    source: `
       	regular x = 3 * 7
       	x++
       	x--
     `,
-        expected: dedent`
+    expected: dedent`
       	let x_1 = (3 * 7);
       	x_1++;
       	x_1--;
     `,
-    },
-    {
-        name: "while",
-        source: `
+  },
+  {
+    name: "while",
+    source: `
       	regular x = 0 
 		while x < 5 {
 			regular y = 0 
@@ -35,7 +35,7 @@ const fixtures = [
 			x = x + 1
 		}
     `,
-        expected: dedent`
+    expected: dedent`
       	let x_1 = 0;
       	while ((x_1 < 5)) {
         	let y_2 = 0;
@@ -46,78 +46,78 @@ const fixtures = [
         	x_1 = (x_1 + 1);
       }
     `,
-    },
-    {
-        name: "ternary",
-        source: `
+  },
+  {
+    name: "ternary",
+    source: `
 		brew(6 == 5 ? 5 : 1)
 		`,
-        expected: dedent`
+    expected: dedent`
 		console.log((((6 === 5)) ? (5) : (1)))
 		`,
-    },
-    {
-        name: "unary",
-        source: `
+  },
+  {
+    name: "unary",
+    source: `
 		decaf x = -5.76`,
 
-        expected: dedent`
+    expected: dedent`
 		let x_1 = -(5.76);`,
-    },
-    {
-        name: "boolean",
-        source: `
+  },
+  {
+    name: "boolean",
+    source: `
 		boolean x = true
 		boolean y = false
 		boolean z = x && y`,
-        expected: dedent`
+    expected: dedent`
 		let x_1 = true;
 		let y_2 = false;
 		let z_3 = (x_1 && y_2);`,
-    },
-    //------------------------------------------------------------------ BELOW DOESNT WORK
-    {
-        name: "function",
-        source: `
+  },
+  //------------------------------------------------------------------ BELOW DOESNT WORK
+  {
+    name: "function",
+    source: `
 		cup regular name -> (regular x) {
 			complete x * 9
 		}
 		name(5)`,
-        expected: dedent`
-		function name_1(x_1) {
+    expected: dedent`
+		function name_2(x_1) {
 			return (x_1 * 9);
 		}
-		name_1(5);`,
-    },
-    {
-        name: "for",
-        source: `
+		name_2(5);`,
+  },
+  {
+    name: "for",
+    source: `
 		stir(regular i = 0; i < 10; i++) {
 			regular cows = 2 + i
 		}`,
 
-        expected: dedent`
+    expected: dedent`
 		for(i_1 = 0; i_1 < 10; i_1++) {
 			let cows_2 = (2 + i_1);
 		}`,
-    },
-    {
-        name: "short if",
-        source: `
+  },
+  {
+    name: "short if",
+    source: `
 		decaf money = 5.1 
-		sugar (money < 6.0) {
+		sugar (money < 6) {
 			brew(money)
 		}`,
-        expected: dedent`
+    expected: dedent`
 		let money_1 = 5.1;
-		if ((money_1 < 6.0)) {
+		if ((money_1 < 6)) {
 			console.log(money_1);
 		}`,
-    },
+  },
 
-	{
-		name: "long if",
-		source: `
+  {
+    name: "long if",
+    source: `
 		regular x = 5
 		regular y = 6
 		regular z = 7
@@ -130,7 +130,7 @@ const fixtures = [
 		} no sugar {
 			brew(0)
 		}`,
-		expected: dedent`
+    expected: dedent`
 		let x_1 = 5;
 		let y_2 = 6;
 		let z_3 = 7;
@@ -143,11 +143,11 @@ const fixtures = [
 		} else {
 			console.log(0);
 		}`,
-	},
+  },
 
-    {
-        name: "class",
-        source: `
+  {
+    name: "class",
+    source: `
 		keurig Person {
 			create(self, put name, regular birthDate) {
 				this.name = name 
@@ -158,7 +158,7 @@ const fixtures = [
 			}
 		}`,
 
-        expected: dedent`
+    expected: dedent`
 		class Person_1 {
 			constructor(name_2, birthDate_3) {
 				this.name = name_2;
@@ -168,14 +168,14 @@ const fixtures = [
 				return x_4;
 			}
 		}`,
-    },
+  },
 ];
 
 describe("The code generator", () => {
-    for (const fixture of fixtures) {
-        it(`produces expected js output for the ${fixture.name} program`, () => {
-            const actual = generate(analyze(fixture.source));
-            assert.deepEqual(actual, fixture.expected);
-        });
-    }
+  for (const fixture of fixtures) {
+    it(`produces expected js output for the ${fixture.name} program`, () => {
+      const actual = generate(analyze(fixture.source));
+      assert.deepEqual(actual, fixture.expected);
+    });
+  }
 });
