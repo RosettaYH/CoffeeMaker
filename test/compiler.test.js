@@ -34,7 +34,7 @@ describe("The compiler", () => {
 	done();
 	})
 
-	it("throw when optimizer is not done", (done) => {
+	it("throw when generator is not done", (done) => {
 	assert.throws(() => generate())
 	done();
 	})
