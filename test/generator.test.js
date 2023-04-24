@@ -64,17 +64,17 @@ const fixtures = [
         expected: dedent`
 		let x_1 = -(5.76);`,
     },
-	{
-		name: "boolean",
-		source: `
+    {
+        name: "boolean",
+        source: `
 		boolean x = true
 		boolean y = false
 		boolean z = x && y`,
-		expected: dedent`
+        expected: dedent`
 		let x_1 = true;
 		let y_2 = false;
 		let z_3 = (x_1 && y_2);`,
-	},
+    },
     //------------------------------------------------------------------ BELOW DOESNT WORK
     {
         name: "function",
@@ -84,8 +84,8 @@ const fixtures = [
 		}
 		name(5)`,
         expected: dedent`
-		function name_1(x_2) {
-			return (x_2 * 9);
+		function name_1(x_1) {
+			return (x_1 * 9);
 		}
 		name_1(5);`,
     },
@@ -102,32 +102,49 @@ const fixtures = [
 		}`,
     },
     {
-        name: "if",
+        name: "short if",
         source: `
- 		regular x = 5 
-		sugar(x < 10) {
-			brew(x)
-		} salt (x > 10) {
-			brew(10)
-		} no sugar {
-			brew(20)
-		}
-
-		sugar(x == 5) {
-			brew(5)
-		} no sugar {
-			brew(10)
+		decaf money = 5.1 
+		sugar (money < 6.0) {
+			brew(money)
 		}`,
         expected: dedent`
-		let x_1 = 5;
-		if ((x_1 < 10)) {
-			console.log(x_1);
-		} else if ((x_1 > 10)) {
-			console.log(10);
-		} else {
-			console.log(20);
+		let money_1 = 5.1;
+		if ((money_1 < 6.0)) {
+			console.log(money_1);
 		}`,
     },
+
+	{
+		name: "long if",
+		source: `
+		regular x = 5
+		regular y = 6
+		regular z = 7
+		sugar (x < y) {
+			brew(x)
+		} salt (y < z) {
+			brew(y)
+		} salt (z < x) {
+			brew(z)
+		} no sugar {
+			brew(0)
+		}`,
+		expected: dedent`
+		let x_1 = 5;
+		let y_2 = 6;
+		let z_3 = 7;
+		if ((x_1 < y_2)) {
+			console.log(x_1);
+		} else if ((y_2 < z_3)) {
+			console.log(y_2);
+		} else if ((z_3 < x_1)) {
+			console.log(z_3);
+		} else {
+			console.log(0);
+		}`,
+	},
+
     {
         name: "class",
         source: `
@@ -141,7 +158,7 @@ const fixtures = [
 			}
 		}`,
 
-		expected: dedent`
+        expected: dedent`
 		class Person_1 {
 			constructor(name_2, birthDate_3) {
 				this.name = name_2;
