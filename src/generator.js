@@ -146,6 +146,7 @@ export default function generate(program) {
 
     //class declaration doesn't work
     ClassDeclaration(s) {
+      throw new Error("Code generation for classes not implemented yet.");
       // output.push(`class ${s.declaration} {`);
       // s.declaration.constructorDec;
       // for (let method of s.declaration.methods) {
