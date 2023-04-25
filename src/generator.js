@@ -26,215 +26,206 @@ export default function generate(program) {
   }
 
   const generators = {
-    Program(p) {
-      gen(p.statements);
-    },
+      Program(p) {
+          gen(p.statements);
+      },
 
-    VariableDeclaration(d) {
-      output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`);
-    },
+      VariableDeclaration(d) {
+          output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`);
+      },
 
-    //function declaration don't work
-    FunctionDeclaration(d) {
-      // //console.log("d.body", d.body) //is undefinded with gen(d.body)
-      //carlos generation below
-      const paramNames = d.params.map(targetName).join(", ");
-      output.push(
-        `function ${gen(d.fun)}(${paramNames}) {` //gen(d.params) is undefinded - OG code
-      );
-      d.body.forEach(gen);
-      output.push("}");
+      //function declaration don't work
+      FunctionDeclaration(d) {
+          // //console.log("d.body", d.body) //is undefinded with gen(d.body)
+          //carlos generation below
+          const paramNames = d.params.map(targetName).join(", ");
+          output.push(
+              `function ${gen(d.fun)}(${paramNames}) {` //gen(d.params) is undefinded - OG code
+          );
+          d.body.forEach(gen);
+          output.push("}");
 
-      //bella generation below
-      // const params = d.params.map(targetName).join(", ");
-      // output.push(`function ${targetName(d.fun)}(${params}) {`);
-      // output.push(`return ${gen(d.body)};`);
-      // output.push("}");
-    },
+          //bella generation below
+          // const params = d.params.map(targetName).join(", ");
+          // output.push(`function ${targetName(d.fun)}(${params}) {`);
+          // output.push(`return ${gen(d.body)};`);
+          // output.push("}");
+      },
 
-    Assignment(s) {
-      output.push(`${gen(s.target)} = ${gen(s.source)};`);
-    },
+      Assignment(s) {
+          output.push(`${gen(s.target)} = ${gen(s.source)};`);
+      },
 
-    WhileStatement(s) {
-      output.push(`while (${gen(s.test)}) {`);
-      gen(s.body);
-      output.push("}");
-    },
+      WhileStatement(s) {
+          output.push(`while (${gen(s.test)}) {`);
+          gen(s.body);
+          output.push("}");
+      },
 
-    //ForStatement don't work
-    ForStatement(s) {
-      // output.push(
-      //     `for (${s.iterator} = ${s.low}; ${
-      //         s.iterator
-      //     } ${s.op} ${s.high}; ${s.iterator}++) {`
-      // );
-      // //gen(s.body);
-      // s.body.forEach(gen);
-      // output.push("}");
+      PrintStatement(s) {
+          const argument = gen(s.argument);
+          output.push(`console.log(${argument});`);
+      },
 
-      //   const i = targetName({ name: "i" });
-      //   output.push(`for (let ${i} = 0; ${i} < ${gen(s.count)}; ${i}++) {`);
-      //   gen(s.body);
-      //   output.push("}");
-      output.push(
-        `for (let ${s.iterator} = ${s.low}; ${s.iterator} ${s.op} ${s.high}; ${s.iterator}++) {`
-      );
-      gen(s.body);
-      output.push("}");
-    },
+      ExpStatement(s) {
+          output.push(`${gen(s.expression)};`);
+      },
 
-    PrintStatement(s) {
-      const argument = gen(s.argument);
-      output.push(`console.log(${argument});`);
-    },
+      Conditional(e) {
+          return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(
+              e.alternate
+          )}))`;
+      },
 
-    ExpStatement(s) {
-      output.push(`${gen(s.expression)};`);
-    },
+      BinaryExpression(e) {
+          const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op;
+          return `(${gen(e.left)} ${op} ${gen(e.right)})`;
+      },
 
-    Conditional(e) {
-      return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(
-        e.alternate
-      )}))`;
-    },
+      UnaryExpression(e) {
+          return `${e.op}(${gen(e.operand)})`;
+      },
 
-    BinaryExpression(e) {
-      const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op;
-      return `(${gen(e.left)} ${op} ${gen(e.right)})`;
-    },
+      Variable(v) {
+          return targetName(v);
+      },
 
-    UnaryExpression(e) {
-      return `${e.op}(${gen(e.operand)})`;
-    },
+      Function(f) {
+          return standardFunctions.get(f) ?? targetName(f);
+      },
 
-    Variable(v) {
-      return targetName(v);
-    },
+      //if statement don't work
+        IfStatement(s) {
+            output.push(`if (${gen(s.test)}) {`);
+            gen(s.consequent);
+            //output.push("} else ");
+            if (s.alternate) {
+      		output.push("} else ");
+                if (s.alternate.type === IfStatement) {
+                    gen(s.alternate);
+                } else {
+                    output.push("{");
+                    gen(s.alternate);
+                    output.push("}");
+                }
+            }
+      	  output.push("}");
+      	//   output.push(`if (${gen(s.test)}) {`);
+        //     gen(s.consequent);
+        //     output.push("}");
+        //     if (s.alternate) {
+        //         if (s.alternate.type === "IfStatement") {
+        //             output[output.length - 1] += ` else `;
+        //             gen(s.alternate);
+        //         } else {
+        //             output.push(` else {`);
+        //             gen(s.alternate);
+        //             output.push("}");
+        //         }
+        //     }
+        },
 
-    Function(f) {
-      return standardFunctions.get(f) ?? targetName(f);
-    },
+      //return doesn't work
+      ReturnStatement(s) {
+          output.push(`return ${gen(s.expression)};`);
+      },
 
-    //if statement don't work
-    IfStatement(s) {
-      // output.push(`if (${gen(s.test)}) {`);
-      // s.consequent;
-      // if (s.alternate instanceof IfStatement) {
-      //     output.push("} else");
-      //     s.alternate;
-      // } else {
-      //     output.push("} else {");
-      //     s.alternate;
-      //     output.push("}");
-      // }
+      //class declaration doesn't work
+      ClassDeclaration(s) {
+          //throw new Error("Code generation for classes not implemented yet.");
+		  
+          // output.push(`class ${s.declaration} {`);
+          // s.declaration.constructorDec;
+          // for (let method of s.declaration.methods) {
+          //     method;
+          // }
+          // output.push("}");
+          output.push(`class ${targetName(s)} {`);
+          gen(s.constructorDec);
+          for (let method of s.methods) {
+              gen(method);
+          }
+          output.push("}");
+      },
+      //class doesn't work
+      Class(c) {
+          return targetName(c);
+      },
 
-      console.log(s.alternate);
-      output.push(`if (${gen(s.test)}) {`);
-      gen(s.consequent);
-      if (s.alternate) {
-        output.push("} else {");
-        gen(s.alternate);
-      }
-      output.push("}");
-    },
+      //constructor declaration doesn't work
+      ConstructorDeclaration(s) {
+        //   output.push(`create (${s.parameters.join(",")}) {`);
+        //   for (let p of s.parameters) {
+        //       output.push(`this."${targetName(p)}" = ${targetName(p)}`);
+        //   }
+        //   output.push("}");
+		output.push(`constructor (${s.parameters.join(", ")}) {`);
+		for (let p of s.parameters) {
+			output.push(`this.${targetName(p)} = ${targetName(p)};`);
+		}
+		output.push("}");
+      },
 
-    //return doesn't work
-    ReturnStatement(s) {
-      output.push(`return ${gen(s.expression)};`);
-    },
+      //constructor doesn't work
+      Constructor(s) {
+          return targetName(s);
+      },
 
-    //class declaration doesn't work
-    ClassDeclaration(s) {
-      throw new Error("Code generation for classes not implemented yet.");
-      // output.push(`class ${s.declaration} {`);
-      // s.declaration.constructorDec;
-      // for (let method of s.declaration.methods) {
-      //     method;
-      // }
-      // output.push("}");
-      output.push(`class ${targetName(s)} {`);
-      gen(s.constructorDec);
-      for (let method of s.methods) {
-        gen(method);
-      }
-      output.push("}");
-    },
+      //method declaration doesn't work
+      MethodDeclaration(s) {
+     	output.push(`${s.method} (${s.params.join(",")}) {`);
+      	gen(s.body);
+      	output.push("}");
+      },
 
-    //class doesn't work
-    Class(c) {
-      return targetName(c);
-    },
+      Increment(s) {
+          output.push(`${gen(s.variable)}++;`);
+      },
 
-    //constructor declaration doesn't work
-    ConstructorDeclaration(s) {
-      output.push(`create (${s.parameters.join(",")}) {`);
-      for (let p of s.parameters) {
-        output.push(`this."${targetName(p)}" = ${targetName(p)}`);
-      }
-      output.push("}");
-    },
+      Decrement(s) {
+          output.push(`${gen(s.variable)}--;`);
+      },
 
-    //constructor doesn't work
-    Constructor(s) {
-      return targetName(s);
-    },
+      // //function call doesn't work
+      FunctionCall(c) {
+          // console.log("c:", c)
+          // console.log("c.callee:", c.callee)
+          // console.log("gen(c.args):", c.args); 	//undefined when i do gen(c.args)
+          //carlos compiler below
+          // const targetCode = standardFunctions.has(c.callee)
+          //     ? standardFunctions.get(c.callee)(c.args)
+          //     : `${gen(c.callee)}(${c.args.join(", ")})`;
+          // // Calls in expressions vs in statements are handled differently
+          // if (c.callee.type.returnType !== Type.VOID) {
+          //     return targetCode;
+          // }
+          // output.push(`${targetCode}`);
 
-    //method declaration doesn't work
-    MethodDeclaration(s) {
-      output.push(`${s.method} (${s.params.join(",")}) {`);
-      gen(s.body);
-      output.push("}");
-    },
+          //bella compiler below
+          const args = c.args.map(gen);
+          const callee = gen(c.callee);
+          return `${callee}(${args.join(",")})`;
+      },
 
-    Increment(s) {
-      output.push(`${gen(s.variable)}++;`);
-    },
+      Number(e) {
+          return e;
+      },
 
-    Decrement(s) {
-      output.push(`${gen(s.variable)}--;`);
-    },
+      BigInt(e) {
+          return e;
+      },
 
-    // //function call doesn't work
-    FunctionCall(c) {
-      // console.log("c:", c)
-      // console.log("c.callee:", c.callee)
-      // console.log("gen(c.args):", c.args); 	//undefined when i do gen(c.args)
-      //carlos compiler below
-      // const targetCode = standardFunctions.has(c.callee)
-      //     ? standardFunctions.get(c.callee)(c.args)
-      //     : `${gen(c.callee)}(${c.args.join(", ")})`;
-      // // Calls in expressions vs in statements are handled differently
-      // if (c.callee.type.returnType !== Type.VOID) {
-      //     return targetCode;
-      // }
-      // output.push(`${targetCode}`);
+      Boolean(e) {
+          return e;
+      },
 
-      //bella compiler below
-      const args = c.args.map(gen);
-      const callee = gen(c.callee);
-      return `${callee}(${args.join(",")})`;
-    },
+      String(e) {
+          return e;
+      },
 
-    Number(e) {
-      return e;
-    },
-
-    BigInt(e) {
-      return e;
-    },
-
-    Boolean(e) {
-      return e;
-    },
-
-    String(e) {
-      return e;
-    },
-
-    Array(a) {
-      a.forEach((e) => gen(e));
-    },
+      Array(a) {
+          a.forEach((e) => gen(e));
+      },
   };
 
   let randomCalled = false;
