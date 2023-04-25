@@ -252,7 +252,6 @@ keurig Car {
 - decrementing/incrementing a string
 - function with more arguments then allowed
 - wrong types for identifiers
-- return in just inside if statement
 - Variable used within a loop is declared and initialized outside of the loop.
 
 #### Authors: Rosetta Yu and Jose Fuentes

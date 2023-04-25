@@ -77,6 +77,13 @@ export class IfStatement {
   }
 }
 
+export class ShortIfStatement {
+    // Example: if x < 3 { print(100); }
+    constructor(test, consequent) {
+        Object.assign(this, { test, consequent });
+    }
+}
+
 export class ExpStatement {
   constructor(expression) {
     this.expression = expression;

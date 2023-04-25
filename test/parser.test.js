@@ -16,7 +16,7 @@ const syntaxChecks = [
     ["the conditional operator", "brew(x ? y : z)"],
     ["comments okay at end of program", "brew(0) #yay\n"],
     ["non-Latin letters in identifiers", "regular コンパイラ = 100"],
-    ["if statements", "sugar(true) {brew(1)} no sugar {brew(2)}"],
+    ["if statements", "sugar(true) {brew(1)} cream {brew(2)}"],
     [
         "while loops",
         "regular x = 0 while x < 5 {regular y = 0 while y < 5 {brew(x * y) y = y + 1} x = x + 1}",

@@ -5,26 +5,26 @@ import optimize from "../src/optimizer.js";
 import generate from "../src/generator.js";
 
 function dedent(s) {
-  return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
+    return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
 }
 
 const fixtures = [
-  {
-    name: "small",
-    source: `
+    {
+        name: "var dec, increment, decrement",
+        source: `
       	regular x = 3 * 7
       	x++
       	x--
     `,
-    expected: dedent`
+        expected: dedent`
       	let x_1 = (3 * 7);
       	x_1++;
       	x_1--;
-    `
-  },
-  {
-    name: "while",
-    source: `
+    `,
+    },
+    {
+        name: "while",
+        source: `
       	regular x = 0 
 		while x < 5 {
 			regular y = 0 
@@ -35,7 +35,7 @@ const fixtures = [
 			x = x + 1
 		}
     `,
-    expected: dedent`
+        expected: dedent`
       	let x_1 = 0;
       	while ((x_1 < 5)) {
         	let y_2 = 0;
@@ -45,97 +45,110 @@ const fixtures = [
         	}
         	x_1 = (x_1 + 1);
       }
-    `
-  },
-  {
-    name: "ternary",
-    source: `
+    `,
+    },
+    {
+        name: "ternary",
+        source: `
 		brew(6 == 5 ? 5 : 1)
 		`,
-    expected: dedent`
+        expected: dedent`
 		console.log((((6 === 5)) ? (5) : (1)));
-		`
-  },
-  {
-    name: "unary",
-    source: `
+		`,
+    },
+    {
+        name: "unary",
+        source: `
 		decaf x = -5.76`,
 
-    expected: dedent`
-		let x_1 = -(5.76);`
-  },
-  {
-    name: "boolean",
-    source: `
+        expected: dedent`
+		let x_1 = -(5.76);`,
+    },
+    {
+        name: "boolean",
+        source: `
 		boolean x = true
 		boolean y = false
 		boolean z = x && y`,
-    expected: dedent`
+        expected: dedent`
 		let x_1 = true;
 		let y_2 = false;
-		let z_3 = (x_1 && y_2);`
-  },
-  //------------------------------------------------------------------ BELOW DOESNT WORK
-  {
-    name: "function",
-    source: `
+		let z_3 = (x_1 && y_2);`,
+    },
+    {
+        name: "function",
+        source: `
 		cup regular name -> (regular x) {
 			complete x * 9
 		}
 		name(5)`,
-    expected: dedent`
+        expected: dedent`
 		function name_2(x_1) {
 			return (x_1 * 9);
 		}
-		name_2(5);`
-  },
-  {
-    name: "short if",
-    source: `
+		name_2(5);`,
+    },
+    {
+        name: "short if",
+        source: `
 		decaf money = 5.1 
 		sugar (money < 6.2) {
 			brew(money)
 		}`,
-    expected: dedent`
+        expected: dedent`
 		let money_1 = 5.1;
 		if ((money_1 < 6.2)) {
 			console.log(money_1);
-		}`
-  },
+		}`,
+    },
+    //below don't work
+    {
+        name: "if with else if",
+        source: `
+		regular x = 0
+		sugar (x == 0) { brew(1) } cream sugar (x == 2) { brew(3) }
+      	sugar (x == 0) { brew(1) } cream sugar (x == 2) { brew(3) } cream { brew(4) }`,
+        expected: dedent`
+		let x_1 = 0;
+      	if ((x_1 === 0)) {
+        	console.log(1);
+      	} else {
+        	if ((x_1 === 2)) {
+          	console.log(3);
+        	}
+      	}
+      	if ((x_1 === 0)) {
+        	console.log(1);
+      	} else
+        	if ((x_1 === 2)) {
+          	console.log(3);
+        	} else {
+          	console.log(4);
+        }`,
+    },
+    {
+        name: "if with just else",
+        source: `
+		regular x = 5
+		regular y = 6
+		sugar (x < y) {
+			brew(x)
+		} cream {
+			brew(y)
+		}`,
+        expected: dedent`
+		let x_1 = 5;
+		let y_2 = 6;
+		if ((x_1 < y_2)) {
+			console.log(x_1);
+		} else {
+			console.log(y_2);
+		}`,
+    },
 
-  {
-    name: "long if",
-    source: `
-  		regular x = 5
-  		regular y = 6
-  		regular z = 7
-  		sugar (x < y) {
-  			brew(x)
-  		} salt (y < z) {
-  			brew(y)
-  		} salt (z < x) {
-  			brew(z)
-  		} no sugar {
-  			brew(0)
-  		}`,
-    expected: dedent`
-  		let x_1 = 5;
-  		let y_2 = 6;
-  		let z_3 = 7;
-  		if ((x_1 < y_2)) {
-  			console.log(x_1);
-  		} else if ((y_2 < z_3)) {
-  			console.log(y_2);
-  		} else if ((z_3 < x_1)) {
-  			console.log(z_3);
-  		} else {
-  			console.log(0);
-  		}`
-  },
-
-  {
-    name: "class",
-    source: `
+    {
+        name: "class",
+        source: `
   		keurig Person {
   			create(self, put name, regular birthDate) {
   				this.name = name
@@ -146,24 +159,24 @@ const fixtures = [
   			}
   		}`,
 
-    expected: dedent`
+        expected: dedent`
   		class Person_1 {
   			constructor(name_2, birthDate_3) {
   				this.name_2 = name_2;
-  				this.birthDate_3x = birthDate_3;
+  				this.birthDate_3 = birthDate_3;
   			}
   			name_2(x_4) {
   				return x_4;
   			}
-  		}`
-  }
+  		}`,
+    },
 ];
 
 describe("The code generator", () => {
-  for (const fixture of fixtures) {
-    it(`produces expected js output for the ${fixture.name} program`, () => {
-      const actual = generate(analyze(fixture.source));
-      assert.deepEqual(actual, fixture.expected);
-    });
-  }
+    for (const fixture of fixtures) {
+        it(`produces expected js output for the ${fixture.name} program`, () => {
+            const actual = generate(analyze(fixture.source));
+            assert.deepEqual(actual, fixture.expected);
+        });
+    }
 });

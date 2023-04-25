@@ -3,87 +3,74 @@ import assert from "assert/strict";
 import analyze, { error, check } from "../src/analyzer.js";
 
 const semanticChecks = [
-  ["variables can be printed", 'brew("A cup of coffee")'],
-  ["variables declaration int", "regular number = 100"],
-  ["variables can be reassigned (ints)", "regular number = 1 number = 50"],
-  ["variables can be reassigned (strings)", 'put team = "bears" team = "dogs"'],
-  ["variables declaration floats", "decaf decimal = 3.14"],
-  ["variables declaration string", 'put name = "Walter White"'],
+    ["variables can be printed", 'brew("A cup of coffee")'],
+    ["variables declaration int", "regular number = 100"],
+    ["variables can be reassigned (ints)", "regular number = 1 number = 50"],
+    [
+        "variables can be reassigned (strings)",
+        'put team = "bears" team = "dogs"',
+    ],
+    ["variables declaration floats", "decaf decimal = 3.14"],
+    ["variables declaration string", 'put name = "Walter White"'],
 
-  ["ternary", "regular name = 6 name == 5 ? 5 : 1"],
-  ["||", "brew(true||1<2||false)"],
-  ["&&", "brew(true&&1<2&&false)"],
-  ["relation", "brew(1<=2 && 3.5<1.2)"],
+    ["ternary", "regular name = 6 name == 5 ? 5 : 1"],
+    ["||", "brew(true||1<2||false)"],
+    ["&&", "brew(true&&1<2&&false)"],
+    ["relation", "brew(1<=2 && 3.5<1.2)"],
 
-  ["return with +", "cup regular name -> (regular x) {complete x + 9}"],
-  ["return with -", "cup regular name -> (regular x) {complete x - 9}"],
-  ["return with *", "cup regular name -> (regular x) {complete x * 9}"],
-  ["return with /", "cup regular name -> (regular x) {complete x / 9}"],
-  ["return with %", "cup regular name -> (regular x) {complete x % 9}"],
+    ["return with +", "cup regular name -> (regular x) {complete x + 9}"],
+    ["return with -", "cup regular name -> (regular x) {complete x - 9}"],
+    ["return with *", "cup regular name -> (regular x) {complete x * 9}"],
+    ["return with /", "cup regular name -> (regular x) {complete x / 9}"],
+    ["return with %", "cup regular name -> (regular x) {complete x % 9}"],
 
-  ["built-in pi", "brew(π)"],
-  ["built-in sqrt", "brew(sqrt(π))"],
-  ["built-in exp", "brew(exp(9.0))"],
-  ["built-in sin", "brew(sin(π))"],
-  ["built-in cos", "brew(cos(93.999))"],
-  ["function assign put", 'cup regular add -> (decaf x, decaf y) {brew("Hi")}'],
-  ["short if", "decaf money = 5.1 sugar (money < 6.0) {brew(money)}"],
-  [
-    "long if",
-    'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
-  ],
+    ["built-in pi", "brew(π)"],
+    ["built-in sqrt", "brew(sqrt(π))"],
+    ["built-in exp", "brew(exp(9.0))"],
+    ["built-in sin", "brew(sin(π))"],
+    ["built-in cos", "brew(cos(93.999))"],
+    [
+        "function assign put",
+        'cup regular add -> (decaf x, decaf y) {brew("Hi")}',
+    ],
+    ["short if", "decaf money = 5.1 sugar (money < 6.0) {brew(money)}"],
+    ["long if", "sugar(true) {brew(1)} cream {brew(3)}"],
+	["long if else", "sugar(true) {brew(1)} cream sugar (true) {brew(2)} cream {brew(3)}"],
 
-  ["while works false", "while(false){decaf cows = 5.0}"],
-  ["while works true", "while(true){decaf cows = 5.0}"],
+    ["while works false", "while(false){decaf cows = 5.0}"],
+    ["while works true", "while(true){decaf cows = 5.0}"],
 
-  //["for works", "stir(regular i = 0; i < 10; i++){regular cows = 2 + i}"],
+    ["increment works", "regular i = 10 i++"],
+    ["decrement works", "regular i = 20 i--"],
+    [
+        "function works with multiplication and regular",
+        "cup regular name -> (regular x) {complete x * 9}",
+    ],
+    [
+        "function works with division and decaf",
+        "cup decaf name -> (decaf x) {complete x / 9.2}",
+    ],
 
-  ["increment works", "regular i = 10 i++"],
-  ["decrement works", "regular i = 20 i--"],
-  [
-    "function works with multiplication and regular",
-    "cup regular name -> (regular x) {complete x * 9}",
-  ],
-  [
-    "function works with division and decaf",
-    "cup decaf name -> (decaf x) {complete x / 9.2}",
-  ],
+    [
+        "class works",
+        "keurig Car {create(self, put name, regular year) {this.name = name this.year = year}}",
+    ],
 
-  [
-    "class works",
-    "keurig Car {create(self, put name, regular year) {this.name = name this.year = year}}",
-  ],
+    ["remainder works", "brew(5%2)"],
+    ["power works", "brew(2**3)"],
+    ["unary expression", "decaf decimal = -5.32"],
+    ["equality works", "brew(1 == 1)"],
+    ["inequality works", "brew(100 != 100)"],
+    ["less than works", "brew(1 < 2)"],
+    ["less than or equal works", "brew(1 <= 2)"],
+    ["greater than works", "brew(1 > 2)"],
+    ["greater than or equal works", "brew(1 >= 2)"],
+    ["comment works", "#this is a comment\n"],
 
-  ["simple if statement", "regular x = 5 sugar (x < 10) {brew(x)}"],
-  [
-    "if with else works",
-    "regular x = 5 sugar (x < 10) {brew(x)} no sugar {brew(10)}",
-  ],
-
-  [
-    "if with else if and else works",
-    "regular x = 5 sugar (x < 10) {brew(x)} salt (x > 10) {brew(10)} no sugar {brew(20)}",
-  ],
-
-  [
-    "if with multiple else if works",
-    'regular age = 0 sugar (age < 18) {brew("Enjoy your early years!")} salt(age > 60) {brew("Retirement age is finally here!")} salt(age > 100) {brew("Great Job!")} no sugar {brew("Errr, good luck in adulthood :p")}',
-  ],
-  ["remainder works", "brew(5%2)"],
-  ["power works", "brew(2**3)"],
-  ["unary expression", "decaf decimal = -5.32"],
-  ["equality works", "brew(1 == 1)"],
-  ["inequality works", "brew(100 != 100)"],
-  ["less than works", "brew(1 < 2)"],
-  ["less than or equal works", "brew(1 <= 2)"],
-  ["greater than works", "brew(1 > 2)"],
-  ["greater than or equal works", "brew(1 >= 2)"],
-  ["comment works", "#this is a comment\n"],
-
-  [
-    "class works with methods",
-    "keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put name -> (self, put x) {x}}",
-  ],
+    [
+        "class works with methods",
+        "keurig Person {create(self, put name, regular birthDate) {this.name = name this.birthDate = birthDate} cup put name -> (self, put x) {x}}",
+    ],
 ];
 
 const semanticErrors = [
@@ -121,17 +108,11 @@ const semanticErrors = [
   ["subtracting string from number", 'brew(5 - "hello")'],
   ["adding string to number", 'brew(5 + "hello")'],
   [
-    "return in an if statement",
-    "regular x = 5 sugar (x < 10) {complete x} no sugar {complete 10}",
-    /Return can only appear in a function/,
-  ],
-  [
     "haven't declared type for identifier",
     'name = "Jose"',
     /Identifier name not declared/,
   ],
 
-  ["for loop with no body", "for (regular i = 0; i < 10; i++) { }"],
 ];
 
 describe("The analyzer", () => {
