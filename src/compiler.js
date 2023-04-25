@@ -8,7 +8,5 @@ export default function compile(source, outputType) {
   }
   const analyzed = analyze(source);
   if (outputType === "analyzed") return analyzed;
-  // const optimized = optimize(analyzed);
-  // if (outputType === "optimized") return optimized;
   return generate(analyzed);
 }

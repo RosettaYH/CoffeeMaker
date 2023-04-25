@@ -8,10 +8,10 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 
 ## Features
 
--   Statically typed language
--   Coffee-themed
--   Loops
--   Classes
+- Statically typed language
+- Coffee-themed
+- Loops
+- Classes
 
 ## Types
 
@@ -124,7 +124,7 @@ var boss = "Gus Fring"; //OH NO, NOT var! :(
 
 ```javascript
 for (let i = 0; i < 10; i++) {
-    print("I love compilers!");
+  print("I love compilers!");
 }
 ```
 
@@ -152,11 +152,11 @@ while(i < 10){
 
 ```javascript
 if (age < 18) {
-    console.log("Enjoy your early years!");
+  console.log("Enjoy your early years!");
 } else if (age > 60) {
-    console.log("Retirement age is finally here!");
+  console.log("Retirement age is finally here!");
 } else {
-    console.log("Errr, good luck in adulthood :p");
+  console.log("Errr, good luck in adulthood :p");
 }
 ```
 
@@ -186,7 +186,7 @@ sugar (age < 18) {
 
 ```javascript
 function add(x, y) {
-    return x + y;
+  return x + y;
 }
 ```
 
@@ -233,7 +233,7 @@ keurig Car {
         this.name = name
         this.year = year
     }
-    
+
     cup regular add -> (self, x, y) {
          complete(x + y)
     }
@@ -244,14 +244,15 @@ keurig Car {
 </table>
 
 ## List of Static Semantic Errors
+
 - Use of undeclared identifiers.
 - Variable used as a function.
 - Redeclaring an already declared identifier.
 - Value returned outside of function.
 - decrementing/incrementing a string
 - function with more arguments then allowed
-- wrong types for identifiers 
-- return in just inside if statement 
+- wrong types for identifiers
+- return in just inside if statement
 - Variable used within a loop is declared and initialized outside of the loop.
 
 #### Authors: Rosetta Yu and Jose Fuentes

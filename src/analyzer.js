@@ -119,7 +119,7 @@ class Context {
     parent = null,
     locals = new Map(),
     inLoop = false,
-    function: f = null,
+    function: f = null
   } = {}) {
     Object.assign(this, { parent, locals, inLoop, function: f });
   }
@@ -141,7 +141,7 @@ class Context {
       ...this,
       ...props,
       parent: this,
-      locals: new Map(),
+      locals: new Map()
     });
   }
 }
@@ -274,6 +274,27 @@ export default function analyze(sourceCode) {
       return new core.WhileStatement(t, b);
     },
 
+    // IfStmt_long(
+    //   _if,
+    //   expression,
+    //   body,
+    //   _elseif,
+    //   elseifexp,
+    //   elseifbody,
+    //   _else,
+    //   elsebody
+    // ) {
+    //   const elseifexpRep = elseifexp.rep();
+    //   const elseifbodyRep = elseifbody.rep();
+    //   let c = elseifexpRep.map(function (exp, i) {
+    //     return [exp, elseifbodyRep[i]];
+    //   });
+    //   for (const [key, value] of Object.entries(c)) {
+    //     return new core.IfStatement(key, value);
+    //   }
+    //   console.log(elseifbody)
+    //   return new core.IfStatement(expression.rep(), body.rep());
+    // },
     IfStmt_long(
       _if,
       expression,
@@ -289,10 +310,33 @@ export default function analyze(sourceCode) {
       let c = elseifexpRep.map(function (exp, i) {
         return [exp, elseifbodyRep[i]];
       });
-      for (const [key, value] of Object.entries(c)) {
-        return new core.IfStatement(key, value);
+
+      let ifStatement;
+
+      // Build the nested IfStatement objects by iterating through the 'c' array in reverse
+      for (let i = c.length - 1; i >= 0; i--) {
+        const [key, value] = c[i];
+        if (i === c.length - 1) {
+          // For the last element in the 'c' array, set the alternate as the provided 'elsebody'
+          ifStatement = new core.IfStatement(key, value, elsebody.rep());
+        } else {
+          // For other elements in the 'c' array, set the alternate as the previously created IfStatement
+          ifStatement = new core.IfStatement(key, value, ifStatement);
+        }
       }
-      return new core.IfStatement(expression.rep(), body.rep());
+
+      // Create the main IfStatement with the expression, body, and the nested IfStatement as the alternate
+      ifStatement = new core.IfStatement(
+        expression.rep(),
+        body.rep(),
+        ifStatement
+      );
+
+      // Log the 'elseifbody' after creating the nested IfStatement objects
+      console.log(elseifbody);
+
+      // Return the main IfStatement with the nested structure
+      return ifStatement;
     },
 
     UpdateExp(variable, operator) {
@@ -433,7 +477,7 @@ export default function analyze(sourceCode) {
 
     _iter(...children) {
       return children.map((child) => child.rep());
-    },
+    }
   });
 
   for (const [name, type] of Object.entries(stdlib.contents)) {
