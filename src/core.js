@@ -59,7 +59,6 @@ export class UnaryExpression {
 }
 
 export class Variable {
-  // Generated when processing a variable declaration
   constructor(name, readOnly, type) {
     Object.assign(this, { name, readOnly, type });
   }
@@ -78,10 +77,9 @@ export class IfStatement {
 }
 
 export class ShortIfStatement {
-    // Example: if x < 3 { print(100); }
-    constructor(test, consequent) {
-        Object.assign(this, { test, consequent });
-    }
+  constructor(test, consequent) {
+    Object.assign(this, { test, consequent });
+  }
 }
 
 export class ExpStatement {
@@ -127,14 +125,12 @@ export class MethodDeclaration {
 }
 
 export class Increment {
-  // Example: count++
   constructor(variable) {
     this.variable = variable;
   }
 }
 
 export class Decrement {
-  // Example: count--
   constructor(variable) {
     this.variable = variable;
   }

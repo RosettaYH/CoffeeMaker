@@ -14,14 +14,6 @@ const optimizers = {
     d.initializer = optimize(d.initializer);
     return d;
   },
-  TypeDeclaration(d) {
-    d.type = optimize(d.type);
-    return d;
-  },
-  Field(f) {
-    f.name = f.name.lexeme;
-    return f;
-  },
   FunctionDeclaration(d) {
     d.fun = optimize(d.fun);
     if (d.body) d.body = optimize(d.body);
@@ -65,6 +57,7 @@ const optimizers = {
   ShortIfStatement(s) {
     s.test = optimize(s.test);
     s.consequent = optimize(s.consequent);
+    console.log(s.test);
     if (s.test.constructor === Boolean) {
       return s.test ? s.consequent : [];
     }
@@ -76,8 +69,6 @@ const optimizers = {
       // while false is a no-op
       return [];
     }
-    s.body = optimize(s.body);
-    return s;
   },
   Conditional(e) {
     e.test = optimize(e.test);
@@ -92,20 +83,13 @@ const optimizers = {
     e.op = optimize(e.op);
     e.left = optimize(e.left);
     e.right = optimize(e.right);
-    if (e.op === "??") {
-      // Coalesce Empty Optional Unwraps
-      if (e.left instanceof core.EmptyOptional) {
-        return e.right;
-      }
-    } else if (e.op === "&&") {
-      // Optimize boolean constants in && and ||
+    if (e.op === "&&") {
       if (e.left === true) return e.right;
       else if (e.right === true) return e.left;
     } else if (e.op === "||") {
       if (e.left === false) return e.right;
       else if (e.right === false) return e.left;
     } else if ([Number, BigInt].includes(e.left.constructor)) {
-      // Numeric constant folding when left operand is constant
       if ([Number, BigInt].includes(e.right.constructor)) {
         if (e.op === "+") return e.left + e.right;
         else if (e.op === "-") return e.left - e.right;
@@ -125,7 +109,6 @@ const optimizers = {
       else if (e.left === 1 && e.op === "**") return 1;
       else if (e.left === 0 && ["*", "/"].includes(e.op)) return 0;
     } else if (e.right.constructor === Number) {
-      // Numeric constant folding when right operand is constant
       if (["+", "-"].includes(e.op) && e.right === 0) return e.left;
       else if (["*", "/"].includes(e.op) && e.right === 1) return e.left;
       else if (e.op === "*" && e.right === 0) return 0;
@@ -143,17 +126,8 @@ const optimizers = {
     }
     return e;
   },
-  SubscriptExpression(e) {
-    e.array = optimize(e.array);
-    e.index = optimize(e.index);
-    return e;
-  },
+
   FunctionCall(c) {
-    c.callee = optimize(c.callee);
-    c.args = optimize(c.args);
-    return c;
-  },
-  ConstructorCall(c) {
     c.callee = optimize(c.callee);
     c.args = optimize(c.args);
     return c;
@@ -171,7 +145,6 @@ const optimizers = {
     return e;
   },
   Array(a) {
-    // Flatmap since each element can be an array
     return a.flatMap(optimize);
   }
 };

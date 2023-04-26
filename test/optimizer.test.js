@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import optimize from "../src/optimizer.js";
 import * as core from "../src/core.js";
 
-// Make some test cases easier to read
 const x = new core.Variable("x", false, core.Type.INT);
 const xpp = new core.Increment(x);
 const xmm = new core.Decrement(x);
@@ -67,29 +66,26 @@ const tests = [
   ["removes x=x in middle", [xpp, new core.Assignment(x, x), xpp], [xpp, xpp]],
   ["optimizes if-true", new core.IfStatement(true, xpp, []), xpp],
   ["optimizes if-false", new core.IfStatement(false, [], xpp), xpp],
-  ["optimizes short-if-true", new core.IfStatement(true, xmm), xmm],
-  ["optimizes short-if-false", [new core.IfStatement(false, xpp)], []],
+  ["optimizes short-if-true", new core.ShortIfStatement(true, xmm), xmm],
+  ["optimizes short-if-false", [new core.ShortIfStatement(false, xpp)], []],
   ["optimizes while-false", [new core.WhileStatement(false, xpp)], []],
-
-  ["applies if-false after folding", new core.IfStatement(eq(1, 1), xpp), xpp],
+  [
+    "applies if-false after folding",
+    new core.ShortIfStatement(eq(1, 1), xpp),
+    xpp
+  ],
   ["optimizes left conditional true", conditional(true, 55, 89), 55],
   ["optimizes left conditional false", conditional(false, 55, 89), 89],
   ["optimizes in functions", intFun(return1p1), intFun(return2)],
-  //   ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
   ["optimizes in arguments", callIdentity([times(3, 5)]), callIdentity([15])],
   [
     "passes through nonoptimizable constructs",
     ...Array(2).fill([
+      new core.Program([new core.ReturnStatement(x)]),
       new core.VariableDeclaration("x", true, "z"),
-      //   new core.TypeDeclaration([new core.Field("x", core.Type.INT)]),
       new core.Assignment(x, new core.BinaryExpression("*", x, "z")),
       new core.Assignment(x, new core.UnaryExpression("not", x)),
-      //   new core.ConstructorCall(identity),
-      new core.VariableDeclaration(
-        "q",
-        false
-        // new core.EmptyArray(core.Type.FLOAT)
-      ),
+      new core.VariableDeclaration("q", false),
       new core.VariableDeclaration("r", false),
       conditional(x, 1, 2),
       unwrapElse(some(x), 7),

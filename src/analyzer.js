@@ -102,7 +102,6 @@ function callArgumentsMustMatch(args, calleeType, at) {
   argumentsMustMatch(args, calleeType.paramTypes, at);
 }
 
-// Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {
   if (node) {
     throw new Error(`${node.source.getLineAndColumnMessage()}${message}`);
@@ -124,7 +123,6 @@ class Context {
     Object.assign(this, { parent, locals, inLoop, function: f });
   }
   sees(name) {
-    // Search "outward" through enclosing scopes
     return this.locals.has(name) || this.parent?.sees(name);
   }
   add(name, entity) {
@@ -150,309 +148,298 @@ export default function analyze(sourceCode) {
   let context = new Context();
 
   const analyzer = coffeemakerGrammar.createSemantics().addOperation("rep", {
-      Program(body) {
-          return new core.Program(body.rep());
-      },
+    Program(body) {
+      return new core.Program(body.rep());
+    },
 
-      VarDec(type, id, _eq, initializer) {
-          const initializerExp = initializer.rep();
-          const variable = new core.Variable(
-              id.sourceString,
-              false,
-              type.rep()
-          );
-          context.add(id.sourceString, variable);
-          mustBeAssignable(initializerExp, { toType: variable.type }, id);
-          return new core.VariableDeclaration(variable, initializerExp);
-      },
+    VarDec(type, id, _eq, initializer) {
+      const initializerExp = initializer.rep();
+      const variable = new core.Variable(id.sourceString, false, type.rep());
+      context.add(id.sourceString, variable);
+      mustBeAssignable(initializerExp, { toType: variable.type }, id);
+      return new core.VariableDeclaration(variable, initializerExp);
+    },
 
-      FuncDec(_fun, returnType, id, _point, _open, params, _close, body) {
-          const rt = returnType.rep();
-          const paramReps = params.asIteration().rep();
-          const paramTypes = paramReps.map((p) => p.type);
-          const f = new core.Function(
-              id.sourceString,
-              new core.FunctionType(paramTypes, rt)
-          );
-          context.add(id.sourceString, f);
-          context = context.newChildContext({ inLoop: false, function: f });
-          for (const p of paramReps) {
-              context.add(p.name, p);
-          }
-          const b = body.rep();
-          context = context.parent;
-          return new core.FunctionDeclaration(id.sourceString, f, paramReps, b);
-      },
+    FuncDec(_fun, returnType, id, _point, _open, params, _close, body) {
+      const rt = returnType.rep();
+      const paramReps = params.asIteration().rep();
+      const paramTypes = paramReps.map((p) => p.type);
+      const f = new core.Function(
+        id.sourceString,
+        new core.FunctionType(paramTypes, rt)
+      );
+      context.add(id.sourceString, f);
+      context = context.newChildContext({ inLoop: false, function: f });
+      for (const p of paramReps) {
+        context.add(p.name, p);
+      }
+      const b = body.rep();
+      context = context.parent;
+      return new core.FunctionDeclaration(id.sourceString, f, paramReps, b);
+    },
 
-      ClassDec(_class, id, _start, constructor, method, _end) {
-          const className = new core.Class(id.sourceString, true);
-          context.add(id.sourceString, className);
-          return new core.ClassDeclaration(
-              className,
-              constructor.rep(),
-              method.rep()
-          );
-      },
+    ClassDec(_class, id, _start, constructor, method, _end) {
+      const className = new core.Class(id.sourceString, true);
+      context.add(id.sourceString, className);
+      return new core.ClassDeclaration(
+        className,
+        constructor.rep(),
+        method.rep()
+      );
+    },
 
-      ConstructDec(
-          _construct,
-          _open,
-          _self,
-          _op,
-          params,
-          _close,
-          _bodyOpen,
-          _bodyClose,
-          fields
-      ) {
-          params = params.asIteration().children;
-          const cos = new core.Constructor(
-              _self.sourceString,
-              params.length,
-              true
-          );
+    ConstructDec(
+      _construct,
+      _open,
+      _self,
+      _op,
+      params,
+      _close,
+      _bodyOpen,
+      _bodyClose,
+      fields
+    ) {
+      params = params.asIteration().children;
+      const cos = new core.Constructor(_self.sourceString, params.length, true);
 
-          context.add(_self.sourceString, cos, _self);
-          context = context.newChildContext({ inLoop: false });
+      context.add(_self.sourceString, cos, _self);
+      context = context.newChildContext({ inLoop: false });
 
-          const paramsRep = params.map((p) => {
-              let variable = new core.Variable(p.sourceString, true);
-              context.add(p.sourceString, variable, p);
-              return variable;
-          });
-          const fieldRep = fields.rep();
-          context = context.parent;
+      const paramsRep = params.map((p) => {
+        let variable = new core.Variable(p.sourceString, true);
+        context.add(p.sourceString, variable, p);
+        return variable;
+      });
+      const fieldRep = fields.rep();
+      context = context.parent;
 
-          return new core.ConstructorDeclaration(paramsRep, fieldRep);
-      },
+      return new core.ConstructorDeclaration(paramsRep, fieldRep);
+    },
 
-      ParamType(type, id) {
-          return new core.Variable(id.sourceString, false, type.rep());
-      },
+    ParamType(type, id) {
+      return new core.Variable(id.sourceString, false, type.rep());
+    },
 
-      MethodDec(
-          _fun,
-          returnType,
-          id,
-          _point,
-          _open,
-          _self,
-          _op,
-          params,
-          _close,
-          body
-      ) {
-          const paramReps = params.asIteration().rep();
-          const paramTypes = paramReps.map((p) => p.type);
-          const f = new core.Function(
-              id.sourceString,
-              new core.FunctionType(paramTypes, returnType.rep())
-          );
-          context.add(id.sourceString, f);
-          context = context.newChildContext({ inLoop: false, function: f });
-          for (const p of paramReps) {
-              context.add(p.name, p);
-          }
-          const b = body.rep();
-          context = context.parent;
-          return new core.MethodDeclaration(id.sourceString, f, paramReps, b);
-      },
+    MethodDec(
+      _fun,
+      returnType,
+      id,
+      _point,
+      _open,
+      _self,
+      _op,
+      params,
+      _close,
+      body
+    ) {
+      const paramReps = params.asIteration().rep();
+      const paramTypes = paramReps.map((p) => p.type);
+      const f = new core.Function(
+        id.sourceString,
+        new core.FunctionType(paramTypes, returnType.rep())
+      );
+      context.add(id.sourceString, f);
+      context = context.newChildContext({ inLoop: false, function: f });
+      for (const p of paramReps) {
+        context.add(p.name, p);
+      }
+      const b = body.rep();
+      context = context.parent;
+      return new core.MethodDeclaration(id.sourceString, f, paramReps, b);
+    },
 
-      Statement_exp(e) {
-          return new core.ExpStatement(e.rep());
-      },
+    Statement_exp(e) {
+      return new core.ExpStatement(e.rep());
+    },
 
-      Statement_assign(id, _eq, expression) {
-          const e = expression.rep();
-          const v = context.lookup(id.sourceString);
-          mustBeAssignable(e, { toType: v.type });
-          return new core.Assignment(v, e);
-      },
+    Statement_assign(id, _eq, expression) {
+      const e = expression.rep();
+      const v = context.lookup(id.sourceString);
+      mustBeAssignable(e, { toType: v.type });
+      return new core.Assignment(v, e);
+    },
 
-      Statement_print(_print, argument) {
-		//do argument.rep().type if you want type checking
-          return new core.PrintStatement(argument.rep(), argument.sourceString);
-      },
+    Statement_print(_print, argument) {
+      //do argument.rep().type if you want type checking
+      return new core.PrintStatement(argument.rep(), argument.sourceString);
+    },
 
-      LoopStmt_while(_while, test, body) {
-          const t = test.rep();
-          mustHaveBooleanType(t);
-          context = context.newChildContext({ inLoop: true });
-          const b = body.rep();
-          context = context.parent;
-          return new core.WhileStatement(t, b);
-      },
+    LoopStmt_while(_while, test, body) {
+      const t = test.rep();
+      mustHaveBooleanType(t);
+      context = context.newChildContext({ inLoop: true });
+      const b = body.rep();
+      context = context.parent;
+      return new core.WhileStatement(t, b);
+    },
 
-      IfStmt_long(_if, _left, exp, _right, block1, _else, block2) {
-          const test = exp.rep();
-          mustHaveBooleanType(test, { at: exp });
-          context = context.newChildContext();
-          const consequent = block1.rep();
-          context = context.parent;
-          context = context.newChildContext();
-          const alternate = block2.rep();
-          context = context.parent;
-          return new core.IfStatement(test, consequent, alternate);
-      },
+    IfStmt_long(_if, _left, exp, _right, block1, _else, block2) {
+      const test = exp.rep();
+      mustHaveBooleanType(test, { at: exp });
+      context = context.newChildContext();
+      const consequent = block1.rep();
+      context = context.parent;
+      context = context.newChildContext();
+      const alternate = block2.rep();
+      context = context.parent;
+      return new core.IfStatement(test, consequent, alternate);
+    },
 
-      IfStmt_elsif(_if, _left, exp, _right, block, _else, trailingIfStatement) {
-          const test = exp.rep();
-          mustHaveBooleanType(test, { at: exp });
-          context = context.newChildContext();
-          const consequent = block.rep();
-          // Do NOT make a new context for the alternate!
-          const alternate = trailingIfStatement.rep();
-          return new core.IfStatement(test, consequent, alternate);
-      },
+    IfStmt_elsif(_if, _left, exp, _right, block, _else, trailingIfStatement) {
+      const test = exp.rep();
+      mustHaveBooleanType(test, { at: exp });
+      context = context.newChildContext();
+      const consequent = block.rep();
+      const alternate = trailingIfStatement.rep();
+      return new core.IfStatement(test, consequent, alternate);
+    },
 
-      IfStmt_short(_if, _left, exp, _right, block) {
-          const test = exp.rep();
-          mustHaveBooleanType(test, { at: exp });
-          context = context.newChildContext();
-          const consequent = block.rep();
-          context = context.parent;
-          return new core.ShortIfStatement(test, consequent);
-      },
+    IfStmt_short(_if, _left, exp, _right, block) {
+      const test = exp.rep();
+      mustHaveBooleanType(test, { at: exp });
+      context = context.newChildContext();
+      const consequent = block.rep();
+      context = context.parent;
+      return new core.ShortIfStatement(test, consequent);
+    },
 
-      UpdateExp(variable, operator) {
-          const v = variable.rep();
-          mustHaveIntegerType(v);
-          return operator.sourceString === "++"
-              ? new core.Increment(v)
-              : new core.Decrement(v);
-      },
+    UpdateExp(variable, operator) {
+      const v = variable.rep();
+      mustHaveIntegerType(v);
+      return operator.sourceString === "++"
+        ? new core.Increment(v)
+        : new core.Decrement(v);
+    },
 
-      Statement_return(returnRep, expression) {
-          mustBeInAFunction(context, returnRep);
-          mustReturnSomething(context.function);
-          const e = expression.rep();
-          mustBeReturnable({ expression: e, from: context.function });
-          return new core.ReturnStatement(e);
-      },
+    Statement_return(returnRep, expression) {
+      mustBeInAFunction(context, returnRep);
+      mustReturnSomething(context.function);
+      const e = expression.rep();
+      mustBeReturnable({ expression: e, from: context.function });
+      return new core.ReturnStatement(e);
+    },
 
-      Block(_open, body, _close) {
-          return body.rep();
-      },
+    Block(_open, body, _close) {
+      return body.rep();
+    },
 
-      Exp_unary(op, operand) {
-          mustHaveNumericOrStringType(operand.rep());
-          return new core.UnaryExpression(
-              op.rep(),
-              operand.rep(),
-              operand.rep().type
-          );
-      },
+    Exp_unary(op, operand) {
+      mustHaveNumericOrStringType(operand.rep());
+      return new core.UnaryExpression(
+        op.rep(),
+        operand.rep(),
+        operand.rep().type
+      );
+    },
 
-      Exp_ternary(test, _questionMark, consequent, _colon, alternate) {
-          const x = test.rep();
-          mustHaveBooleanType(x);
-          const [y, z] = [consequent.rep(), alternate.rep()];
-          return new core.Conditional(x, y, z);
-      },
+    Exp_ternary(test, _questionMark, consequent, _colon, alternate) {
+      const x = test.rep();
+      mustHaveBooleanType(x);
+      const [y, z] = [consequent.rep(), alternate.rep()];
+      return new core.Conditional(x, y, z);
+    },
 
-      Exp1_or(left, op, right) {
-          let [x, o, y] = [left.rep(), op.rep()[0], right.rep()];
-          mustBeTheSameType(x, y);
-          mustHaveBooleanType(x);
-          return new core.BinaryExpression(o, x, y, BOOLEAN);
-      },
+    Exp1_or(left, op, right) {
+      let [x, o, y] = [left.rep(), op.rep()[0], right.rep()];
+      mustBeTheSameType(x, y);
+      mustHaveBooleanType(x);
+      return new core.BinaryExpression(o, x, y, BOOLEAN);
+    },
 
-      Exp2_and(left, op, right) {
-          let [x, o, y] = [left.rep(), op.rep(), right.rep()];
-          mustBeTheSameType(x, y);
-          mustHaveBooleanType(x);
-          return new core.BinaryExpression(o, x, y, BOOLEAN);
-      },
+    Exp2_and(left, op, right) {
+      let [x, o, y] = [left.rep(), op.rep(), right.rep()];
+      mustBeTheSameType(x, y);
+      mustHaveBooleanType(x);
+      return new core.BinaryExpression(o, x, y, BOOLEAN);
+    },
 
-      Exp3_compare(left, op, right) {
-          const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-          mustBeTheSameType(x, y);
-          if (["<", "<=", ">", ">="].includes(op.sourceString)) {
-              mustHaveNumericOrStringType(x);
-          }
-          return new core.BinaryExpression(o, x, y, BOOLEAN);
-      },
+    Exp3_compare(left, op, right) {
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
+      mustBeTheSameType(x, y);
+      if (["<", "<=", ">", ">="].includes(op.sourceString)) {
+        mustHaveNumericOrStringType(x);
+      }
+      return new core.BinaryExpression(o, x, y, BOOLEAN);
+    },
 
-      Exp4_add(left, op, right) {
-          const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-          mustBeTheSameType(x, y);
-          if (o == "+" || o == "-") {
-              mustHaveNumericType(x);
-          }
-          return new core.BinaryExpression(o, x, y, x.type);
-      },
+    Exp4_add(left, op, right) {
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
+      mustBeTheSameType(x, y);
+      if (o == "+" || o == "-") {
+        mustHaveNumericType(x);
+      }
+      return new core.BinaryExpression(o, x, y, x.type);
+    },
 
-      Exp5_multiply(left, op, right) {
-          const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-          mustBeTheSameType(x, y);
-          if (o == "*" || o == "/" || o == "%") {
-              mustHaveNumericType(x);
-          }
-          return new core.BinaryExpression(o, x, y, x.type);
-      },
+    Exp5_multiply(left, op, right) {
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
+      mustBeTheSameType(x, y);
+      if (o == "*" || o == "/" || o == "%") {
+        mustHaveNumericType(x);
+      }
+      return new core.BinaryExpression(o, x, y, x.type);
+    },
 
-      Exp6_power(left, op, right) {
-          const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
-          if (o == "**") {
-              mustHaveNumericType(x);
-          }
-          return new core.BinaryExpression(o, x, y, x.type);
-      },
+    Exp6_power(left, op, right) {
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()];
+      if (o == "**") {
+        mustHaveNumericType(x);
+      }
+      return new core.BinaryExpression(o, x, y, x.type);
+    },
 
-      Exp7_parens(_open, expression, _close) {
-          return expression.rep();
-      },
+    Exp7_parens(_open, expression, _close) {
+      return expression.rep();
+    },
 
-      Call(callee, _left, args, _right) {
-          let [c, a] = [callee.rep(), args.asIteration().rep()];
-          mustBeCallable(c);
-          callArgumentsMustMatch(a, c.type);
-          return new core.FunctionCall(c, a, c.type.returnType);
-      },
+    Call(callee, _left, args, _right) {
+      let [c, a] = [callee.rep(), args.asIteration().rep()];
+      mustBeCallable(c);
+      callArgumentsMustMatch(a, c.type);
+      return new core.FunctionCall(c, a, c.type.returnType);
+    },
 
-      Exp7_id(_id) {
-          // When an id appears in an expr, it had better have been declared
-          //console.log(context.lookup(this.sourceString));
-          return context.lookup(this.sourceString);
-      },
+    Exp7_id(_id) {
+      return context.lookup(this.sourceString);
+    },
 
-      Type_id(id) {
-          const entity = context.lookup(id.sourceString);
-          entityMustBeAType(entity);
-          return entity;
-      },
+    Type_id(id) {
+      const entity = context.lookup(id.sourceString);
+      entityMustBeAType(entity);
+      return entity;
+    },
 
-      id(_first, _rest) {
-          return context.lookup(this.sourceString);
-      },
+    id(_first, _rest) {
+      return context.lookup(this.sourceString);
+    },
 
-      true(_) {
-          return true;
-      },
+    true(_) {
+      return true;
+    },
 
-      false(_) {
-          return false;
-      },
+    false(_) {
+      return false;
+    },
 
-      num(_whole, _point, _fraction, _e, _sign, _exponent) {
-          return Number(this.sourceString);
-      },
+    num(_whole, _point, _fraction, _e, _sign, _exponent) {
+      return Number(this.sourceString);
+    },
 
-      int(_whole) {
-          return BigInt(this.sourceString);
-      },
+    int(_whole) {
+      return BigInt(this.sourceString);
+    },
 
-      stringlit(_open, _body, _close) {
-          return String(this.sourceString);
-      },
+    stringlit(_open, _body, _close) {
+      return String(this.sourceString);
+    },
 
-      _terminal() {
-          return this.sourceString;
-      },
+    _terminal() {
+      return this.sourceString;
+    },
 
-      _iter(...children) {
-          return children.map((child) => child.rep());
-      },
+    _iter(...children) {
+      return children.map((child) => child.rep());
+    }
   });
 
   for (const [name, type] of Object.entries(stdlib.contents)) {
