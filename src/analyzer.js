@@ -270,6 +270,7 @@ export default function analyze(sourceCode) {
       },
 
       Statement_print(_print, argument) {
+		//do argument.rep().type if you want type checking
           return new core.PrintStatement(argument.rep(), argument.sourceString);
       },
 

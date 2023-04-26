@@ -148,4 +148,8 @@ describe("The analyzer", () => {
   it("does check function", () => {
     assert.throws(() => check());
   });
+
+  it("throws on syntax error", () => {
+	assert.throws(() => analyze(")asdfrfron@&*^*&^*&^*"));
+  })
 });

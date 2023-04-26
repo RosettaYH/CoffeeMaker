@@ -1,4 +1,4 @@
-import { IfStatement, Type } from "./core.js";
+import { IfStatement } from "./core.js";
 import { contents } from "./stdlib.js";
 
 export default function generate(program) {
@@ -17,9 +17,7 @@ export default function generate(program) {
             if (!mapping.has(entity)) {
                 mapping.set(entity, mapping.size + 1);
             }
-            return `${entity.name ?? entity.description}_${mapping.get(
-                entity
-            )}`;
+            return `${entity.name}_${mapping.get(entity)}`;
         };
     })(new Map());
 
@@ -36,22 +34,11 @@ export default function generate(program) {
             output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`);
         },
 
-        //function declaration don't work
         FunctionDeclaration(d) {
-            // //console.log("d.body", d.body) //is undefinded with gen(d.body)
-            //carlos generation below
             const paramNames = d.params.map(targetName).join(", ");
-            output.push(
-                `function ${gen(d.fun)}(${paramNames}) {` //gen(d.params) is undefinded - OG code
-            );
+            output.push(`function ${gen(d.fun)}(${paramNames}) {`);
             d.body.forEach(gen);
             output.push("}");
-
-            //bella generation below
-            // const params = d.params.map(targetName).join(", ");
-            // output.push(`function ${targetName(d.fun)}(${params}) {`);
-            // output.push(`return ${gen(d.body)};`);
-            // output.push("}");
         },
 
         Assignment(s) {
@@ -118,18 +105,8 @@ export default function generate(program) {
             output.push(`return ${gen(s.expression)};`);
         },
 
-        //class declaration doesn't work
         ClassDeclaration(s) {
-            //throw new Error("Code generation for classes not implemented yet.");
-
-            // output.push(`class ${s.declaration} {`);
-            // s.declaration.constructorDec;
-            // for (let method of s.declaration.methods) {
-            //     method;
-            // }
-            // output.push("}");
-            //   gen(s.)
-            output.push(`class ${targetName(s)} {`);
+            output.push(`class ${targetName(s.id)} {`);
             gen(s.constructorDec);
             for (let method of s.methods) {
                 gen(method);
@@ -137,37 +114,23 @@ export default function generate(program) {
             output.push("}");
         },
 
-        //constructor declaration doesn't work
         ConstructorDeclaration(s) {
-            //   output.push(`create (${s.parameters.join(",")}) {`);
-            //   for (let p of s.parameters) {
-            //       output.push(`this."${targetName(p)}" = ${targetName(p)}`);
-            //   }
-            //   output.push("}");
 
             const parameterNames = s.parameters.map((p) => {
-                // Remove any prefixes like 'put' or 'regular'
                 p.name = p.name.split(" ")[1];
                 return targetName(p);
             });
 
-            output.push(`constructor (${parameterNames.join(", ")}) {`);
+            output.push(`constructor(${parameterNames.join(", ")}) {`);
             for (let p of parameterNames) {
                 output.push(`this.${p} = ${p};`);
             }
             output.push("}");
         },
 
-        // //constructor doesn't work
-        // Constructor(s) {
-        //   console.log("AAAA");
-        //   console.log(s);
-        //   return targetName(s);
-        // },
-
-        //method declaration doesn't work
         MethodDeclaration(s) {
-            output.push(`${s.method} (${s.params.join(",")}) {`);
+            const paramNames = s.params.map(targetName).join(", ");
+            output.push(`${targetName(s)}(${paramNames}) {`);
             gen(s.body);
             output.push("}");
         },
@@ -180,22 +143,7 @@ export default function generate(program) {
             output.push(`${gen(s.variable)}--;`);
         },
 
-        // //function call doesn't work
         FunctionCall(c) {
-            // console.log("c:", c)
-            // console.log("c.callee:", c.callee)
-            // console.log("gen(c.args):", c.args); 	//undefined when i do gen(c.args)
-            //carlos compiler below
-            // const targetCode = standardFunctions.has(c.callee)
-            //     ? standardFunctions.get(c.callee)(c.args)
-            //     : `${gen(c.callee)}(${c.args.join(", ")})`;
-            // // Calls in expressions vs in statements are handled differently
-            // if (c.callee.type.returnType !== Type.VOID) {
-            //     return targetCode;
-            // }
-            // output.push(`${targetCode}`);
-
-            //bella compiler below
             const args = c.args.map(gen);
             const callee = gen(c.callee);
             return `${callee}(${args.join(",")})`;
@@ -216,6 +164,10 @@ export default function generate(program) {
         Array(a) {
             a.forEach((e) => gen(e));
         },
+
+        String(e) {
+            return e;
+        }
     };
 
     gen(program);

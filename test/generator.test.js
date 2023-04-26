@@ -8,6 +8,7 @@ function dedent(s) {
     return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
 }
 
+//when i try and print with strings, get an error
 const fixtures = [
     {
         name: "var dec, increment, decrement",
@@ -101,7 +102,7 @@ const fixtures = [
 			console.log(money_1);
 		}`,
     },
-    //below don't work
+
     {
         name: "if with else if",
         source: `
@@ -145,7 +146,7 @@ const fixtures = [
 			console.log(y_2);
 		}`,
     },
-
+	//just this don't work
     {
         name: "class",
         source: `
@@ -165,11 +166,27 @@ const fixtures = [
   				this.name_2 = name_2;
   				this.birthDate_3 = birthDate_3;
   			}
-  			name_2(x_4) {
+  			name_5(x_4) {
   				return x_4;
   			}
   		}`,
     },
+	{
+		name: "print with strings",
+		source: `
+		brew("hello world")`,
+		expected: dedent`
+		console.log("hello world");`,
+	}
+	// {
+	// 	name: "standard functions",
+	// 	source: `
+	// 	regular x = 5
+	// 	brew(sin(x)))
+	// 	brew(cos(x))
+	// 	brew(exp(x))
+	// 	`,
+	// },
 ];
 
 describe("The code generator", () => {
