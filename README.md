@@ -12,6 +12,7 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 - Coffee-themed
 - Loops
 - Classes
+- Functions
 
 ## Types
 
@@ -36,6 +37,10 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
     <td>function</td>
     <td>cup</td>
   </tr>
+    <tr>
+    <td>Boolean</td>
+    <td>boolean</td>
+  </tr>
 </table>
 
 ## Other Keywords
@@ -55,11 +60,11 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
   </tr>
   <tr>
     <td>else if</td>
-    <td>salt</td>
+    <td>cream sugar</td>
   </tr>
   <tr>
     <td>else</td>
-    <td>no salt</td>
+    <td>cream</td>
   </tr>
 </table>
 
@@ -167,9 +172,9 @@ if (age < 18) {
 ```
 sugar (age < 18) {
     brew("Enjoy your early years!")
-} salt(age > 60) {
+} cream sugar(age > 60) {
     brew("Retirement age is finally here!")
-} no sugar {
+} cream {
     brew("Errr, good luck in adulthood :p")
 }
 ```
@@ -196,7 +201,7 @@ function add(x, y) {
 
 ```
 cup regular add -> (x, y) {
-    complete(x + y)
+    complete x + y
 }
 ```
 
@@ -235,7 +240,7 @@ keurig Car {
     }
 
     cup regular add -> (self, x, y) {
-         complete(x + y)
+         complete x + y
     }
 }
 ```
