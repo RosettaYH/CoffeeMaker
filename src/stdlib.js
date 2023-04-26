@@ -13,7 +13,6 @@ export const contents = Object.freeze({
   put: Type.STRING,
   void: Type.VOID,
   π: new Variable("π", true, Type.FLOAT),
-  //   print: new Function("brew", new FunctionType([Type.ANY], Type.VOID)),
   sin: new Function("sin", floatFloatType),
   cos: new Function("cos", floatFloatType),
   exp: new Function("exp", floatFloatType),

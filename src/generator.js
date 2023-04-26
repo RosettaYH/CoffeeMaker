@@ -9,7 +9,6 @@ export default function generate(program) {
         [contents.cos, (x) => `Math.cos(${x})`],
         [contents.exp, (x) => `Math.exp(${x})`],
         [contents.ln, (x) => `Math.log(${x})`],
-        [contents.hypot, ([x, y]) => `Math.hypot(${x},${y})`],
     ]);
 
     const targetName = ((mapping) => {
@@ -115,7 +114,6 @@ export default function generate(program) {
         },
 
         ConstructorDeclaration(s) {
-
             const parameterNames = s.parameters.map((p) => {
                 p.name = p.name.split(" ")[1];
                 return targetName(p);
@@ -146,7 +144,11 @@ export default function generate(program) {
         FunctionCall(c) {
             const args = c.args.map(gen);
             const callee = gen(c.callee);
-            return `${callee}(${args.join(",")})`;
+            if (standardFunctions.has(c.callee)) {
+                return standardFunctions.get(c.callee)(gen(c.args[0]));
+            } else {
+                return `${callee}(${args.join(",")})`;
+            }
         },
 
         Number(e) {
@@ -167,7 +169,7 @@ export default function generate(program) {
 
         String(e) {
             return e;
-        }
+        },
     };
 
     gen(program);

@@ -177,16 +177,24 @@ const fixtures = [
 		brew("hello world")`,
 		expected: dedent`
 		console.log("hello world");`,
-	}
-	// {
-	// 	name: "standard functions",
-	// 	source: `
-	// 	regular x = 5
-	// 	brew(sin(x)))
-	// 	brew(cos(x))
-	// 	brew(exp(x))
-	// 	`,
-	// },
+	},
+	{
+		name: "standard functions",
+		source: `
+		decaf x = 5.3
+		brew(sin(x))
+		brew(cos(x))
+		brew(exp(x))
+		brew(ln(x))
+		`,
+		expected: dedent`
+		let x_1 = 5.3;
+		console.log(Math.sin(x_1));
+		console.log(Math.cos(x_1));
+		console.log(Math.exp(x_1));
+		console.log(Math.log(x_1));
+		`,
+	},
 ];
 
 describe("The code generator", () => {
