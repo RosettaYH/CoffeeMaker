@@ -8,7 +8,6 @@ function dedent(s) {
     return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
 }
 
-//when i try and print with strings, get an error
 const fixtures = [
     {
         name: "var dec, increment, decrement",
@@ -146,7 +145,7 @@ const fixtures = [
 			console.log(y_2);
 		}`,
     },
-	//just this don't work
+
     {
         name: "class",
         source: `

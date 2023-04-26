@@ -57,7 +57,6 @@ const optimizers = {
   ShortIfStatement(s) {
     s.test = optimize(s.test);
     s.consequent = optimize(s.consequent);
-    console.log(s.test);
     if (s.test.constructor === Boolean) {
       return s.test ? s.consequent : [];
     }
@@ -66,7 +65,6 @@ const optimizers = {
   WhileStatement(s) {
     s.test = optimize(s.test);
     if (s.test === false) {
-      // while false is a no-op
       return [];
     }
   },
