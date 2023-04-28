@@ -111,7 +111,6 @@ export class ConstructorDeclaration {
   }
 }
 
-//added constructor
 export class Constructor {
   constructor(name, paramCount, readOnly) {
     Object.assign(this, { name, paramCount, readOnly });
