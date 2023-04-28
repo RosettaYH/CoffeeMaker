@@ -205,8 +205,8 @@ export default function analyze(sourceCode) {
       context = context.newChildContext({ inLoop: false });
 
       const paramsRep = params.map((p) => {
-        let variable = new core.Variable(p.sourceString, true);
-        context.add(p.sourceString, variable, p);
+        let variable = new core.Variable(p.sourceString, true, p.rep().type);
+        context.add(p.rep().name, p);
         return variable;
       });
       const fieldRep = fields.rep();

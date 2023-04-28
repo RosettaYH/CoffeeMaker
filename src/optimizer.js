@@ -135,22 +135,7 @@ const optimizers = {
         return c;
     },
     ClassDeclaration(e) {
-        e.id = optimize(e.id);
-        e.constructorDec = optimize(e.constructorDec);
-        e.methods = optimize(e.methods);
         return e;
-    },
-    ConstructorDeclaration(e) {
-        e.parameters = optimize(e.parameters);
-        e.body = optimize(e.body);
-        return e;
-    },
-    MethodDeclaration(d) {
-        d.name = optimize(d.name);
-        d.meth = optimize(d.meth);
-        d.params = optimize(d.params);
-        if (d.body) d.body = optimize(d.body);
-        return d;
     },
     BigInt(e) {
         return e;
