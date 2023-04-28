@@ -13,6 +13,8 @@ Welcome, all coffee lovers! Haven’t fully clenched your taste buds with coffee
 - Loops
 - Classes
 - Functions
+- Basic Types: int, floats, strings, boolean
+- No billian dollar mistake!
 
 ## Types
 
