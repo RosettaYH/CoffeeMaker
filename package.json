@@ -1,8 +1,8 @@
 {
   "name": "coffeemaker",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A compiler for the CoffeMaker programming language",
+  "main": "coffeemaker.js",
   "type": "module",
   "scripts": {
     "test": "c8 mocha"
