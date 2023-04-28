@@ -9,6 +9,10 @@ const optimizers = {
     p.statements = optimize(p.statements);
     return p;
   },
+  PrintStatement(s) {
+	s.argument = optimize(s.argument);
+	return s;
+  },
   VariableDeclaration(d) {
     d.variable = optimize(d.variable);
     d.initializer = optimize(d.initializer);

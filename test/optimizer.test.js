@@ -10,7 +10,6 @@ const return1p1 = new core.ReturnStatement(
 );
 const return2 = new core.ReturnStatement(2);
 const returnX = new core.ReturnStatement(x);
-const onePlusTwo = new core.BinaryExpression("+", 1, 2, core.Type.INT);
 const identity = Object.assign(new core.Function("id"), { body: returnX });
 const voidInt = new core.FunctionType([], core.Type.INT);
 const intFun = (body) =>
@@ -27,7 +26,6 @@ const less = (x, y) => new core.BinaryExpression("<", x, y);
 const eq = (x, y) => new core.BinaryExpression("==", x, y);
 const times = (x, y) => new core.BinaryExpression("*", x, y);
 const neg = (x) => new core.UnaryExpression("-", x);
-const sub = (a, e) => new core.SubscriptExpression(a, e);
 const unwrapElse = (o, e) => new core.BinaryExpression("??", o, e);
 const conditional = (x, y, z) => new core.Conditional(x, y, z);
 const some = (x) => new core.UnaryExpression("some", x);
