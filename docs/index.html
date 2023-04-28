@@ -127,9 +127,9 @@ while(i < 10){
                   <pre><code class="text-white">
 sugar (age < 18) {
     brew("Enjoy your early years!")
-} salt(age > 60) {
+} cream sugar(age > 60) {
     brew("Retirement age is finally here!")
-} no sugar {
+} cream {
     brew("Errr, good luck in adulthood :p")
 }
                   </code></pre>
@@ -142,7 +142,7 @@ sugar (age < 18) {
               <div class="offset-sm-4 col-sm-8 offset-lg-4 col-lg-8">
                   <pre><code class="text-white">
 cup regular add -> (x, y) {
-    complete(x + y)
+    complete x + y
 }
                   </code></pre>
               </div>
@@ -156,13 +156,13 @@ cup regular add -> (x, y) {
               <div class="offset-sm-3 col-sm-6 col-lg-8 offset-lg-4">
                   <pre><code class="text-white">
 keurig Car {
-    create(self, name, year) {
+    create(self, put name, regular year) {
         this.name = name
         this.year = year
     }
     
-    cup regular add -> (self, x, y) {
-         complete(x + y)
+    cup regular add -> (self, regular x, regular y) {
+         complete x + y
     }
 }
                   </code></pre>
