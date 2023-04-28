@@ -2,7 +2,6 @@ import assert from "assert/strict";
 import util from "util";
 import compile from "../src/compiler.js";
 import optimize from "../src/optimizer.js";
-import generate from "../src/generator.js";
 
 const sampleProgram = 'brew("A cup of coffee")';
 

@@ -1,3 +1,0 @@
-stir(regular i = 0; i < 10; i++) {
-  regular cows = 2 + i
-}

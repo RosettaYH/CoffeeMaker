@@ -116,21 +116,18 @@ const semanticErrors = [
 ];
 
 describe("The analyzer", () => {
-  // does the semantic checks
   for (const [scenario, source] of semanticChecks) {
     it(`recognizes ${scenario}`, () => {
       assert.ok(analyze(source));
     });
   }
 
-  // does the semantic errors
   for (const [scenario, source, errorMessagePattern] of semanticErrors) {
     it(`throws on ${scenario}`, () => {
       assert.throws(() => analyze(source), errorMessagePattern);
     });
   }
 
-  //(AST stuff)
   it(`builds an unoptimized AST for a simple program`, () => {
     const ast = analyze("brew(1 + 3)");
     assert.equal(ast.statements.length, 1);
