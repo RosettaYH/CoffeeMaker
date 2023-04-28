@@ -100,10 +100,10 @@ console.log(“A cup of coffee”)
 <td>
 
 ```javascript
+// two slashes is a comment in javascript
 let number = 100;
 const name = "Walter White";
 var boss = "Gus Fring"; //OH NO, NOT var! :(
-// two slashes is a comment in javascript
 ```
 
 </td>
@@ -111,10 +111,10 @@ var boss = "Gus Fring"; //OH NO, NOT var! :(
 <td>
 
 ```
+ # the pound (hash) is a comment in CoffeeMaker
  regular number = 100 	#for numbers/integers
  decaf decimal = 3.14 	#for floats
  put name = "Walter White" 	#for Strings
- # the pound (hash) is a comment in CoffeeMaker
 ```
 
 </td>
@@ -140,8 +140,8 @@ for (let i = 0; i < 10; i++) {
 ```
 regular i = 4
 while(i < 10){
-	brew("I love to sleep!")
-	i = i + 1
+  brew("I love to sleep!")
+  i = i + 1
 }
 ```
 
@@ -200,7 +200,7 @@ function add(x, y) {
 <td>
 
 ```
-cup regular add -> (x, y) {
+cup decaf add -> (decaf x, decaf y) {
     complete x + y
 }
 ```
@@ -234,12 +234,12 @@ class Car {
 
 ```
 keurig Car {
-    create(self, name, year) {
+    create(self, put name, regular year) {
         this.name = name
         this.year = year
     }
 
-    cup regular add -> (self, x, y) {
+    cup regular add -> (self, regular x, regular y) {
          complete x + y
     }
 }
