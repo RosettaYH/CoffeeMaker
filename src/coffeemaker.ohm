@@ -1,25 +1,25 @@
 CoffeeMaker {
   Program   = Statement*
-  Statement = VarDec                 		-- vardec
-            | FuncDec    	                -- funcdec
-            | ClassDec			        -- classDec
+  Statement = VarDec                            -- vardec
+            | FuncDec                           -- funcdec
+            | ClassDec                          -- classDec
             | id "=" Exp                        -- assign
             | print Exp                         -- print
             | LoopStmt                          -- loop
-            | IfStmt				-- if
-            | return Exp			-- return
+            | IfStmt                            -- if
+            | return Exp                        -- return
             | UpdateExp                         -- update
-	    | Exp		                -- exp
+	          | Exp                               -- exp
             
   VarDec        = Type id "=" Exp
   
-  FuncDec 	= function Type id "->" "(" Params ")" Block
+  FuncDec       = function Type id "->" "(" Params ")" Block
   ClassDec      = class id "{" ConstructDec MethodDec* "}"
   ConstructDec  = construct "(" self "," Params ")" "{" Field* "}"
   Field         = this "." id "=" Exp
   MethodDec     = function Type id "->" "(" self "," Params ")" Block
   
-  LoopStmt  = while Exp Block                               		               -- while
+  LoopStmt  = while Exp Block                                       -- while
   UpdateExp = id updateop            
 
   IfStmt    = if "(" Exp ")" Block else Block                       -- long
@@ -29,28 +29,28 @@ CoffeeMaker {
               
   Block     = "{" Statement* "}"
 
-  Exp       = ("-" | "!") Exp7                        -- unary
-            | Exp1 "?" Exp1 ":" Exp                   -- ternary
+  Exp       = ("-" | "!") Exp7                                      -- unary
+            | Exp1 "?" Exp1 ":" Exp                                 -- ternary
             | Exp1
-  Exp1      = Exp1 "||" Exp2                          -- or
+  Exp1      = Exp1 "||" Exp2                                        -- or
             | Exp2
-  Exp2      = Exp2 "&&" Exp3                          -- and
+  Exp2      = Exp2 "&&" Exp3                                        -- and
             | Exp3
-  Exp3      = Exp4 ("<="|"<"|"=="|"!="|">="|">") Exp4 -- compare
+  Exp3      = Exp4 ("<="|"<"|"=="|"!="|">="|">") Exp4               -- compare
             | Exp4
-  Exp4      = Exp4 ("+" | "-") Exp5                   -- add
+  Exp4      = Exp4 ("+" | "-") Exp5                                 -- add
             | Exp5
-  Exp5      = Exp5 ("*" | "/" | "%") Exp6             -- multiply
+  Exp5      = Exp5 ("*" | "/" | "%") Exp6                           -- multiply
             | Exp6
-  Exp6      = Exp7 "**" Exp6                          -- power
+  Exp6      = Exp7 "**" Exp6                                        -- power
             | Exp7
   Exp7      = num
-	    | int
+	          | int
             | true
             | false
             | Call
-            | id                                      -- id
-            | "(" Exp ")"                             -- parens
+            | id                                                    -- id
+            | "(" Exp ")"                                           -- parens
             | stringlit
  
 
@@ -58,7 +58,7 @@ CoffeeMaker {
   Params    = ListOf<ParamType, ",">
   Args      = ListOf<Exp, ",">
 
-  Type      = id                                      -- id
+  Type      = id                                                    -- id
 			
   ParamType = Type id 
 
@@ -87,5 +87,5 @@ CoffeeMaker {
   idchar    = letter | digit | "_"
   stringlit = "\"" (~"\\" ~"\"" ~"\n" any )* "\""
   updateop  =  "++" | "--"
-  space     += "#" (~"\n" any)* "\n"                  -- comment
+  space     += "#" (~"\n" any)* "\n"                                   -- comment
 }
